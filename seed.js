@@ -5,15 +5,15 @@ const bcrypt = require('bcryptjs');
 setSetting('store_name', 'PEPTIVE');
 setSetting('store_tagline', 'SCIENCE. PURITY. POWER.');
 setSetting('primary_color', '#B8860B');
-setSetting('theme', 'dark');
+setSetting('theme', 'light');
 setSetting('currency', 'USD');
 setSetting('currency_symbol', '$');
 setSetting('discount_percent', '0');
 setSetting('contact_email', 'info@peptivelab.com');
-setSetting('contact_phone', '+1 (888) 555-0199');
-setSetting('whatsapp', '18885550199');
-setSetting('shipping_note', 'Worldwide shipping. 2-5 business days.');
-setSetting('shipping_note_es', 'Envíos internacionales. 2-5 días hábiles.');
+setSetting('contact_phone', '+1 (702) 793-9856');
+setSetting('whatsapp', '17027939856');
+setSetting('shipping_note', 'Worldwide shipping. Fast & discreet.');
+setSetting('shipping_note_es', 'Envíos internacionales. Rápido y discreto.');
 setSetting('legal_disclaimer', 'Research compounds for laboratory use only. Not for human or veterinary consumption.');
 setSetting('legal_disclaimer_es', 'Productos exclusivamente para uso de investigación. No aptos para consumo humano ni veterinario.');
 
@@ -97,7 +97,7 @@ const products = [
   { name: 'CJC-1295 (no DAC)', name_en: 'CJC-1295 (no DAC)', slug: 'cjc-1295', cat: 'hormona-de-crecimiento', short: 'Análogo de GHRH de acción prolongada', short_en: 'Long-acting GHRH analog', presentation: 'Lyophilized vial', purity: 'HPLC >99%', sizes: [{ label: '2mg', price: 29.99, stock: 60 }, { label: '5mg', price: 59.99, stock: 45 }], featured: 1 },
   { name: 'CJC-1295 + Ipamorelin Blend', name_en: 'CJC-1295 + Ipamorelin Blend', slug: 'cjc-ipamorelin-blend', cat: 'hormona-de-crecimiento', short: 'Mezcla sinérgica GHRH + GHRP', short_en: 'Synergistic GHRH + GHRP blend', presentation: 'Lyophilized vial', purity: 'HPLC >99%', sizes: [{ label: '5mg', price: 54.99, stock: 40 }, { label: '10mg', price: 94.99, stock: 25 }], featured: 0 },
   { name: 'Ipamorelin', name_en: 'Ipamorelin', slug: 'ipamorelin', cat: 'hormona-de-crecimiento', short: 'Secretagogo selectivo de GH', short_en: 'Selective GH secretagogue', presentation: 'Lyophilized vial', purity: 'HPLC >99%', sizes: [{ label: '2mg', price: 24.99, stock: 60 }, { label: '5mg', price: 49.99, stock: 45 }], featured: 0 },
-  { name: 'Tesamorelin', name_en: 'Tesamorelin', slug: 'tesamorelin', cat: 'hormona-de-crecimiento', short: 'Análogo de GHRH para investigación de composición corporal', short_en: 'GHRH analog for body composition research', presentation: 'Lyophilized vial', purity: 'HPLC >99%', sizes: [{ label: '2mg', price: 39.99, stock: 45 }, { label: '5mg', price: 84.99, stock: 30 }], featured: 1 },
+  { name: 'Tesamorelin', name_en: 'Tesamorelin', slug: 'tesamorelin', cat: 'hormona-de-crecimiento', short: 'Análogo de GHRH para investigación de composición corporal', short_en: 'GHRH analog for body composition research', presentation: 'Lyophilized vial', purity: 'HPLC >99%', sizes: [{ label: '2mg', price: 39.99, stock: 45 }, { label: '5mg', price: 84.99, stock: 30 }, { label: '10mg', price: 149.99, stock: 20 }], featured: 1 },
   { name: 'Sermorelin', name_en: 'Sermorelin', slug: 'sermorelin', cat: 'hormona-de-crecimiento', short: 'Análogo de GHRH (1-29) para investigación', short_en: 'GHRH (1-29) analog for research', presentation: 'Lyophilized vial', purity: 'HPLC >99%', sizes: [{ label: '2mg', price: 24.99, stock: 55 }, { label: '5mg', price: 49.99, stock: 40 }], featured: 1 },
   { name: 'MK-677 (Ibutamoren)', name_en: 'MK-677 (Ibutamoren)', slug: 'mk-677', cat: 'hormona-de-crecimiento', short: 'Secretagogo oral de GH no peptídico', short_en: 'Non-peptide oral GH secretagogue', presentation: 'Capsules', purity: 'HPLC >99%', sizes: [{ label: '25mg x30', price: 49.99, stock: 50 }, { label: '25mg x60', price: 89.99, stock: 30 }], featured: 0 },
   { name: 'HGH 191aa', name_en: 'HGH 191aa', slug: 'hgh-191aa', cat: 'hormona-de-crecimiento', short: 'Hormona de crecimiento humana recombinante 191aa', short_en: 'Recombinant human growth hormone 191aa', presentation: 'Lyophilized vial', purity: 'HPLC >99%', sizes: [{ label: '10IU', price: 44.99, stock: 40 }, { label: '36IU', price: 139.99, stock: 25 }, { label: '100IU', price: 349.99, stock: 15 }], featured: 1 },

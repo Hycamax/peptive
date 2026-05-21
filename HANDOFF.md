@@ -174,15 +174,37 @@ The original approved vial style for reference:
 ### Task 3 — FULL MOCKUP MATCHING (NOT optional polish — this is a REQUIREMENT)
 The site MUST match the approved mockup at `public/img/homepage-mockup-light.png` EXACTLY. This is not vague polish — it's a specific visual target. Here's what must match:
 
-1. **Header:** Small PEPTIVE wordmark logo (not large text) in the nav bar, with Home/Products/Categories links, search bar, EN|ES toggle, theme toggle, cart icon
+1. **Header:** Small PEPTIVE circular seal logo (`public/img/peptive-seal-approved.png`) in the nav bar (already added), with Home/Products/Categories links, search bar, EN|ES toggle, theme toggle, cart icon
 2. **Hero:** Large PEPTIVE serif wordmark with gold DNA helix I, gold ornamental divider with molecular endpoints, "SCIENCE. PURITY. POWER." tagline, pill badge "Research-grade peptides · HPLC ≥99%", two CTA buttons ("View Catalog →" and "WhatsApp"), three trust badges below (HPLC Purity >99%, Per-lot COA, Worldwide Shipping)
-3. **Trust bar:** 4 icon cards in a row (HPLC PURITY, FAST SHIPPING, DIRECT SUPPORT, STOCK ON HAND) with gold icons
-4. **Category section:** "Explore by category" with 5 icon-card tiles (Metabolic Health, Performance & Recovery, Anti-Aging & Longevity, Cognitive Support, Research Tools) — each with a gold icon, letter watermark, title, and description
+3. **Trust bar:** 4 icon cards in a row (HPLC PURITY, FAST SHIPPING, DIRECT SUPPORT, STOCK ON HAND) with gold icons. "Fast Shipping" subtitle should just say "Discreet & reliable" — NO specific day counts.
+4. **Category section:** "Explore by category" with SMALL compact icon-card tiles (Metabolic Health, Performance & Recovery, Anti-Aging & Longevity, Cognitive Support, Research Tools) — each with a gold icon, letter watermark, title, and description. These should be SMALL buttons, not large cards taking up too much space.
 5. **Featured products:** Dark navy luxury product cards with the vial images, product name, category tag, price, "Purity ≥ 99%" badge — 4 per row
-6. **Footer:** 4-column layout (Brand + socials, Contact info, Shipping info, Categories list)
+6. **Footer:** 4-column layout (Circular seal logo + tagline, Contact info with +1 (702) 793-9856 + "WhatsApp messaging only", Shipping info, Categories list)
 7. **Overall feel:** Warm ivory (#FAF7F2) background, gold accents, elegant serif headings, clean sans-serif body text, subtle molecule line-art decorations (NOT gold orbs or heavy gradients)
 
 Do NOT interpret this as optional suggestions. The mockup IS the spec.
+
+### Task 4 — LANGUAGE FIXES (CRITICAL)
+The site has a language mixing bug. When in English mode:
+- ALL text must be in English. No Spanish should appear anywhere.
+- Category names in product cards and breadcrumbs were showing in Spanish (e.g., "Hormona de Crecimiento" instead of "Growth Hormone"). This is now fixed in `server.js` `localizeProduct()` function which also localizes `category_name` from the JOIN.
+- However, verify ALL pages are fully English when `lang=en`. Check: product cards, breadcrumbs, category sidebar, footer category links.
+- The EN|ES toggle in the header should only show the ES option when the user clicks it. In English mode, do NOT show Spanish text anywhere.
+- Remove any remaining Spanish text that appears in English mode.
+
+### Task 5 — PRODUCT IMAGE NOTES
+The current vial images in `public/uploads/` have:
+- Gold caps (the approved style calls for SILVER/aluminum caps)
+- QR code overlaid as a separate element in the bottom-right corner of the image
+
+**The QR code should look like it's PRINTED ON THE VIAL LABEL** (part of the cream label design), not a floating overlay on the dark background. If regenerating images, use silver/aluminum crimp caps and integrate the QR code into the label area itself.
+
+### Task 6 — MISCELLANEOUS FIXES
+- Remove any mention of "10 vials / kit" (already removed from i18n.js)
+- Categories sidebar on `/products` page is now collapsible (uses `<details>` element) — collapsed by default
+- Tesamorelin now has 2mg, 5mg, and 10mg sizes
+- WhatsApp number: +1 (702) 793-9856, messaging only
+- Footer uses circular seal image (not blurry text logo)
 
 ---
 

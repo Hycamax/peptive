@@ -24,6 +24,11 @@ function localizeProduct(p, lang) {
   if (!p) return p;
   if (lang === 'en' && p.name_en) p.name = p.name_en;
   if (lang === 'en' && p.short_description_en) p.short_description = p.short_description_en;
+  // Localize category_name from JOIN (it comes as Spanish by default)
+  if (lang === 'en' && p.category_slug) {
+    const cat = db.prepare('SELECT name_en FROM categories WHERE slug = ?').get(p.category_slug);
+    if (cat && cat.name_en) p.category_name = cat.name_en;
+  }
   return p;
 }
 

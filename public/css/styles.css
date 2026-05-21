@@ -498,118 +498,18 @@ h3 { font-weight: 600; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
 
-/* ========================================================================
-   PEPTIVE — Mockup-match additions (v3)
-   Header brand image · centered hero · category icon tiles ·
-   dark featured product cards · product-detail dose badge · footer brand
-   ======================================================================== */
+/* Collapsible categories filter */
+.filter-collapse { border: none; }
+.filter-collapse summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px; }
+.filter-collapse summary::-webkit-details-marker { display: none; }
+.filter-collapse summary::after { content: "▸"; font-size: 0.8em; transition: transform 0.2s; }
+.filter-collapse[open] summary::after { transform: rotate(90deg); }
+.filter-collapse summary h3 { margin: 0; display: inline; }
 
-/* Header — image wordmark */
-.brand { padding: 4px 0; }
-.brand-mark { height: 36px; width: auto; display: block; transition: opacity var(--t-fast); }
-.brand:hover .brand-mark { opacity: .85; }
-[data-theme="dark"] .brand-mark { filter: brightness(1.05) contrast(1.05); }
+/* Footer brand with seal logo */
+.footer-brand { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.footer-logo { border-radius: 50%; object-fit: cover; }
+.footer-tagline { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
 
-/* Visually hidden utility for screen readers */
-.visually-hidden { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-
-/* Centered hero with image wordmark */
-.hero-centered { text-align: center; padding: 80px 32px 96px; }
-.hero-centered .hero-content { max-width: 920px; margin: 0 auto; }
-.hero-centered .hero-actions { justify-content: center; }
-.hero-centered .hero-features { justify-content: center; }
-.hero-title-img { font-size: 0 !important; margin: 12px 0 28px !important; line-height: 0 !important; }
-.hero-wordmark-img {
-  display: block;
-  width: min(640px, 86%);
-  max-width: 100%;
-  height: auto;
-  margin: 0 auto;
-  border-radius: var(--radius);
-  box-shadow: 0 24px 60px -16px rgba(184,134,11,.18), 0 0 0 1px rgba(184,134,11,.10);
-  animation: fade-in-up .9s var(--ease) .1s both;
-  background: var(--ivory);
-}
-[data-theme="dark"] .hero-wordmark-img { box-shadow: 0 24px 80px -20px rgba(184,134,11,.45), 0 0 0 1px rgba(184,134,11,.25); }
-.hero-dots { list-style: none; padding: 0; margin: 36px 0 0; display: inline-flex; align-items: center; justify-content: center; gap: 32px; flex-wrap: wrap; font-size: .92rem; color: var(--text-2); animation: fade-in-up .8s var(--ease) .6s both; }
-.hero-dots li { display: inline-flex; align-items: center; gap: 10px; }
-.hero-dots li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px rgba(184,134,11,.55); }
-.hero-molecules { position: absolute; inset: 0; pointer-events: none; z-index: -1; opacity: .35; background-image:
-  radial-gradient(circle at 10% 20%, var(--gold) 1.5px, transparent 2px),
-  radial-gradient(circle at 92% 30%, var(--gold) 1.5px, transparent 2px),
-  radial-gradient(circle at 18% 78%, var(--gold) 1.5px, transparent 2px),
-  radial-gradient(circle at 85% 75%, var(--gold) 1.5px, transparent 2px),
-  radial-gradient(circle at 50% 12%, var(--gold) 1px, transparent 1.5px),
-  radial-gradient(circle at 50% 92%, var(--gold) 1px, transparent 1.5px);
-}
-
-/* Category section — 5-up grid with icon-top tiles */
-.category-grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
-.category-tile { display: flex; flex-direction: column; align-items: flex-start; padding: 26px 22px; }
-.category-tile-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--accent-gradient-soft); color: var(--gold); display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(184,134,11,.28); margin-bottom: 18px; transition: transform var(--t), background var(--t), color var(--t); }
-.category-tile-icon svg { width: 26px; height: 26px; }
-.category-tile:hover .category-tile-icon { transform: rotate(-4deg) scale(1.06); background: var(--accent-gradient); color: #0A0A14; border-color: transparent; }
-.category-tile h3 { margin: 0 0 6px; font-size: 1.02rem; }
-.category-tile p { font-size: .84rem; line-height: 1.5; color: var(--text-muted); }
-
-/* Featured products — dark navy luxury cards (only in featured section) */
-.featured-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-.featured-grid .product-card {
-  background: linear-gradient(180deg, #12121E 0%, #0A0A14 100%);
-  border-color: rgba(184,134,11,.28);
-  box-shadow: 0 8px 24px -10px rgba(10,10,20,.35);
-}
-.featured-grid .product-card:hover { border-color: rgba(184,134,11,.55); box-shadow: 0 24px 60px -18px rgba(10,10,20,.55), 0 0 0 1px rgba(184,134,11,.4); }
-.featured-grid .product-card .product-image { background: radial-gradient(80% 80% at 50% 35%, rgba(184,134,11,.18), transparent 70%), #0E0E1A; }
-.featured-grid .product-card .product-image::after { background: linear-gradient(180deg, transparent 55%, rgba(10,10,20,.65)); }
-.featured-grid .product-card .product-cat { color: #D4A017; }
-.featured-grid .product-card .product-name { color: #F5F0E8; }
-.featured-grid .product-card .product-short { color: #A0A0B0; }
-.featured-grid .product-card .price-old { color: #7A7060; }
-.featured-grid .product-card .price-new { color: #F5F0E8; }
-.featured-grid .product-card .from-label { color: #7A7060; }
-.featured-grid .product-card .size-count { background: rgba(184,134,11,.10); border-color: rgba(184,134,11,.22); color: #D4A017; }
-.featured-grid .product-card .verify-badge { color: #D4A017; }
-.featured-grid .product-card .badge-featured { background: rgba(10,10,20,.85); }
-
-/* Product detail — vial image with floating dose badge */
-.vial-image-wrap { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-.vial-image { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius); }
-.vial-dose-badge {
-  position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%);
-  background: var(--accent-gradient); color: #0A0A14;
-  padding: 9px 20px; border-radius: var(--radius-pill);
-  font-weight: 800; font-size: .92rem; font-variant-numeric: tabular-nums; letter-spacing: .06em;
-  box-shadow: 0 10px 28px -8px rgba(184,134,11,.55), inset 0 -1px 0 rgba(0,0,0,.15);
-  border: 1px solid rgba(184,134,11,.5);
-  z-index: 2;
-}
-.vial-dose-badge.dose-flash { animation: dose-pop .42s var(--ease); }
-@keyframes dose-pop {
-  0% { transform: translateX(-50%) scale(1); }
-  40% { transform: translateX(-50%) scale(1.18); box-shadow: 0 14px 36px -8px rgba(184,134,11,.75); }
-  100% { transform: translateX(-50%) scale(1); }
-}
-
-/* Footer — brand wordmark image */
-.footer-brand { display: flex; flex-direction: column; gap: 12px; }
-.footer-brand-mark { display: block; height: 56px; width: auto; max-width: 100%; border-radius: 8px; }
-[data-theme="dark"] .footer-brand-mark { background: rgba(250,247,242,.02); }
-
-/* Responsive — mockup additions */
-@media (max-width: 1100px) {
-  .category-grid-5 { grid-template-columns: repeat(3, 1fr); }
-  .featured-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 720px) {
-  .category-grid-5 { grid-template-columns: repeat(2, 1fr); }
-  .hero-centered { padding: 56px 22px 64px; }
-  .hero-dots { gap: 18px; font-size: .85rem; }
-}
-@media (max-width: 480px) {
-  .category-grid-5 { grid-template-columns: 1fr; }
-  .featured-grid { grid-template-columns: 1fr; }
-  .brand-mark { height: 30px; }
-  .hero-wordmark-img { width: 94%; }
-  .vial-dose-badge { font-size: .82rem; padding: 7px 16px; }
-}
+/* Header brand logo */
+.brand-logo { border-radius: 50%; object-fit: cover; margin-right: 8px; vertical-align: middle; }

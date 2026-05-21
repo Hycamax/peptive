@@ -3,15 +3,15 @@
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-brand">
-        <img src="/static/img/peptive-wordmark-approved.png" alt="<%= settings.store_name %>" class="footer-brand-mark" />
-        <p><%= settings.store_tagline %></p>
+        <img src="/static/img/peptive-seal-approved.png" alt="PEPTIVE" class="footer-logo" width="60" height="60" />
+        <p class="footer-tagline"><%= settings.store_tagline %></p>
       </div>
       <div>
         <h4><%= t('footer.contact') %></h4>
         <p>📧 <%= settings.contact_email %></p>
         <p>📞 <%= settings.contact_phone %></p>
         <% if (settings.whatsapp) { %>
-          <p><a href="https://wa.me/<%= settings.whatsapp %>" target="_blank">WhatsApp</a></p>
+          <p><a href="https://wa.me/<%= settings.whatsapp %>" target="_blank">WhatsApp</a> <small>(messaging only)</small></p>
         <% } %>
       </div>
       <div>

@@ -18,12 +18,7 @@
 <div class="product-detail">
   <div class="product-detail-image">
     <% if (p.image) { %>
-      <div class="vial-image-wrap">
-        <img src="<%= p.image %>" alt="<%= p.name %>" class="vial-image" />
-        <% if (defaultSize) { %>
-          <span class="vial-dose-badge" id="vialDoseBadge"><%= defaultSize.label %></span>
-        <% } %>
-      </div>
+      <img src="<%= p.image %>" alt="<%= p.name %>" />
     <% } else { %>
       <svg class="vial-icon big branded" id="detailVial" viewBox="0 0 100 140" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <defs>
@@ -131,7 +126,6 @@
   const saveBadge = document.getElementById('saveBadge');
   const stockIndicator = document.getElementById('stockIndicator');
   const detailDose = document.getElementById('detailVialDose');
-  const doseBadge = document.getElementById('vialDoseBadge');
   const discountPct = <%= discountPct %>;
   const lang = <%- JSON.stringify(lang) %>;
   const sym = <%- JSON.stringify(settings.currency_symbol || '$') %>;
@@ -156,12 +150,6 @@
       qtyField.max = stock;
       if (parseInt(qtyField.value, 10) > stock) qtyField.value = stock;
       if (detailDose) detailDose.textContent = label;
-      if (doseBadge) {
-        doseBadge.textContent = label;
-        doseBadge.classList.remove('dose-flash');
-        void doseBadge.offsetWidth;
-        doseBadge.classList.add('dose-flash');
-      }
       const disc = applyDisc(price);
       priceNew.textContent = fmt(disc);
       if (priceOld) priceOld.textContent = fmt(price);

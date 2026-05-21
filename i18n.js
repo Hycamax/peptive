@@ -25,7 +25,7 @@ const STRINGS = {
     'trust.purity.title': 'HPLC purity',
     'trust.purity.sub': 'Certified >99%',
     'trust.ship.title': 'Fast shipping',
-    'trust.ship.sub': '2-5 business days',
+    'trust.ship.sub': 'Discreet & reliable',
     'trust.support.title': 'Direct support',
     'trust.support.sub': 'WhatsApp 1-on-1',
     'trust.stock.title': 'Stock on hand',
@@ -159,7 +159,7 @@ const STRINGS = {
     'tpl.sizes': 'Sizes',
     'tpl.purity': 'Purity',
     'tpl.disclaimer': 'Research compound for laboratory use only. Not for human or veterinary consumption. Store refrigerated at 2-8 °C. Keep out of reach of children.',
-    'tpl.kit': '10 vials / kit',
+    'tpl.kit': '',
     'tpl.viewWhatsapp': 'Chat on WhatsApp',
 
     // Cart hydration messages (flash)
@@ -192,7 +192,7 @@ const STRINGS = {
     'trust.purity.title': 'Pureza HPLC',
     'trust.purity.sub': 'Certificada >99%',
     'trust.ship.title': 'Envíos rápidos',
-    'trust.ship.sub': '2-5 días hábiles',
+    'trust.ship.sub': 'Discreto y confiable',
     'trust.support.title': 'Atención directa',
     'trust.support.sub': 'WhatsApp 1 a 1',
     'trust.stock.title': 'Stock disponible',
@@ -316,7 +316,7 @@ const STRINGS = {
     'tpl.sizes': 'Presentaciones',
     'tpl.purity': 'Pureza',
     'tpl.disclaimer': 'Producto destinado exclusivamente a uso de investigación científica en laboratorio. No apto para consumo humano ni veterinario. Almacenar refrigerado entre 2-8 °C. Manténgase fuera del alcance de los niños.',
-    'tpl.kit': '10 viales / kit',
+    'tpl.kit': '',
     'tpl.viewWhatsapp': 'Chatear por WhatsApp',
 
     'flash.added': '"{name}" agregado al carrito',
@@ -344,7 +344,7 @@ function buildDescription(short, sizes, lang) {
   return [
     short,
     '',
-    sizeList ? `${t('tpl.sizes', lang)}: ${sizeList} (${t('tpl.kit', lang)})` : '',
+    sizeList ? `${t('tpl.sizes', lang)}: ${sizeList}` : '',
     `${t('tpl.purity', lang)}: HPLC >99%`,
     '',
     t('tpl.disclaimer', lang)
