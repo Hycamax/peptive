@@ -67,7 +67,9 @@ The homepage hero section (`views/index.ejs`) currently shows the text wordmark 
 Consider replacing the text wordmark with an `<img>` of `peptive-wordmark.png`, or placing the seal above the text, or both. Make it stunning.
 
 ### Task 2 — Size-Toggle Image Switching (Images Already Done ✅)
-All 65 product vial images are ALREADY GENERATED with real scannable QR codes and placed in `public/uploads/{slug}.png`. No generation needed.
+All 65 product vial images are ALREADY GENERATED and placed in `public/uploads/{slug}.png`. No generation needed.
+
+**IMPORTANT — QR CODE ON THE VIAL:** The QR code is part of the actual vial label design (printed on the label itself). It is NOT a separate floating overlay on the product image. The QR code appears as a small element in the bottom-right area of the cream label on the vial. Do NOT add any separate QR code overlay on top of the product images.
 
 **YOUR TASK:** Implement size-toggle image switching on the product detail page. When a customer toggles between sizes (e.g., 5mg, 10mg, 30mg), the vial image should visually update to show the correct dosage. Options:
 - Use CSS/JS to overlay the dosage text dynamically on the base vial image
@@ -169,16 +171,18 @@ The original approved vial style for reference:
 
 **Images already at:** `public/uploads/{slug}.png` — all 65 done with real QR codes ✅
 
-### Task 3 — UI/UX Polish
-The design system is solid (luxury navy/gold, Space Grotesk + Inter, gold animations). Opportunities to improve:
+### Task 3 — FULL MOCKUP MATCHING (NOT optional polish — this is a REQUIREMENT)
+The site MUST match the approved mockup at `public/img/homepage-mockup-light.png` EXACTLY. This is not vague polish — it's a specific visual target. Here's what must match:
 
-1. **Typography rhythm** — audit heading scales across pages for consistency
-2. **Product detail page** — the specs list could use icon-cards instead of plain `<li>` items
-3. **Cart + checkout** — compare against Hims/Roman checkout flows for inspiration
-4. **Category tiles on homepage** — consider adding product count badges
-5. **Empty states** — add illustrated empty states for cart, no search results
-6. **Micro-interactions** — button press feels, badge pop animations on add-to-cart
-7. **Admin panel** — lowest priority but a light refresh would help
+1. **Header:** Small PEPTIVE wordmark logo (not large text) in the nav bar, with Home/Products/Categories links, search bar, EN|ES toggle, theme toggle, cart icon
+2. **Hero:** Large PEPTIVE serif wordmark with gold DNA helix I, gold ornamental divider with molecular endpoints, "SCIENCE. PURITY. POWER." tagline, pill badge "Research-grade peptides · HPLC ≥99%", two CTA buttons ("View Catalog →" and "WhatsApp"), three trust badges below (HPLC Purity >99%, Per-lot COA, Worldwide Shipping)
+3. **Trust bar:** 4 icon cards in a row (HPLC PURITY, FAST SHIPPING, DIRECT SUPPORT, STOCK ON HAND) with gold icons
+4. **Category section:** "Explore by category" with 5 icon-card tiles (Metabolic Health, Performance & Recovery, Anti-Aging & Longevity, Cognitive Support, Research Tools) — each with a gold icon, letter watermark, title, and description
+5. **Featured products:** Dark navy luxury product cards with the vial images, product name, category tag, price, "Purity ≥ 99%" badge — 4 per row
+6. **Footer:** 4-column layout (Brand + socials, Contact info, Shipping info, Categories list)
+7. **Overall feel:** Warm ivory (#FAF7F2) background, gold accents, elegant serif headings, clean sans-serif body text, subtle molecule line-art decorations (NOT gold orbs or heavy gradients)
+
+Do NOT interpret this as optional suggestions. The mockup IS the spec.
 
 ---
 
@@ -332,8 +336,9 @@ Requires Node.js 22+ (uses built-in `node:sqlite`).
 1. **Set light theme as default** — `data-theme="light"` in header.ejs
 2. **Fill hero with large PEPTIVE wordmark** — use `public/img/peptive-wordmark-approved.png`, NO empty space
 3. **Implement size-toggle image switching** — vial image updates when toggling dosage sizes
-4. **Polish UI** — fonts, animations, hover effects, premium feel matching light theme mockup
-5. **Deploy to peptivelab.com** when ready
+4. **FULL MOCKUP MATCH** — rebuild the homepage to EXACTLY match `public/img/homepage-mockup-light.png` (header, hero, trust bar, categories, featured products with dark cards, footer). This is NOT optional polish.
+5. **QR codes are ON the vial labels** — do NOT add separate QR overlays on product images. The QR is already part of the printed label in the vial images.
+6. **Deploy to peptivelab.com** when ready
 
 ---
 

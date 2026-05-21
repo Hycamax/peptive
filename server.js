@@ -38,8 +38,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const IS_PROD = process.env.NODE_ENV === 'production';
 
-if (IS_PROD) app.set('trust proxy', 1);
-
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -188,13 +186,6 @@ app.get('/', (req, res) => {
   for (const p of featured) { p.sizesArr = parseSizes(p); localizeProduct(p, res.locals.lang); }
   res.render('index', { featured });
 });
-
-app.get('/productos', (req, res) => {
-  const qs = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '';
-  res.redirect(301, '/products' + qs);
-});
-app.get('/producto/:slug', (req, res) => res.redirect(301, '/product/' + req.params.slug));
-app.get('/carrito', (req, res) => res.redirect(301, '/cart'));
 
 app.get('/products', (req, res) => {
   const { category: categoria, q, sort: orden } = req.query;

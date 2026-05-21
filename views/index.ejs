@@ -2,12 +2,13 @@
 <%- include('partials/header', { title }) %>
 
 <section class="hero hero-peptive hero-centered">
+  <div class="hero-molecules" aria-hidden="true"></div>
   <div class="hero-content">
+    <span class="hero-eyebrow"><%= t('hero.eyebrow') %></span>
     <h1 class="hero-title hero-title-img">
       <img src="/static/img/peptive-wordmark-approved.png" alt="PEPTIVE — Science. Purity. Power." class="hero-wordmark-img" />
       <span class="visually-hidden">PEPTIVE — <%= settings.store_tagline %></span>
     </h1>
-    <span class="hero-pill">Research-grade peptides · HPLC ≥99%</span>
     <% if (discountPct > 0) { %>
       <p class="hero-promo"><%= t('hero.promo', { pct: discountPct }) %></p>
     <% } %>
@@ -20,9 +21,9 @@
       <% } %>
     </div>
     <ul class="hero-dots">
-      <li>HPLC Purity &gt;99%</li>
-      <li>Per-lot COA</li>
-      <li>Worldwide Shipping</li>
+      <li><%= t('hero.f1') %></li>
+      <li><%= t('hero.f2') %></li>
+      <li><%= t('hero.f3') %></li>
     </ul>
   </div>
 </section>
@@ -30,25 +31,25 @@
 <section class="trust-strip">
   <div class="trust-item">
     <div class="trust-item-icon" aria-hidden="true">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
     </div>
     <div><strong><%= t('trust.purity.title') %></strong><small><%= t('trust.purity.sub') %></small></div>
   </div>
   <div class="trust-item">
     <div class="trust-item-icon" aria-hidden="true">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
     </div>
     <div><strong><%= t('trust.ship.title') %></strong><small><%= t('trust.ship.sub') %></small></div>
   </div>
   <div class="trust-item">
     <div class="trust-item-icon" aria-hidden="true">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.33 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.33 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
     </div>
     <div><strong><%= t('trust.support.title') %></strong><small><%= t('trust.support.sub') %></small></div>
   </div>
   <div class="trust-item">
     <div class="trust-item-icon" aria-hidden="true">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>
     </div>
     <div><strong><%= t('trust.stock.title') %></strong><small><%= t('trust.stock.sub') %></small></div>
   </div>
@@ -57,27 +58,27 @@
 <section class="section section-categories">
   <div class="section-head">
     <h2><%= t('section.categories') %></h2>
-    <a href="/products" class="link"><%= t('section.viewAll') %> →</a>
+    <a href="/products" class="link"><%= t('section.viewAll') %></a>
   </div>
-  <div class="category-grid category-grid-icons">
+  <div class="category-grid category-grid-5">
     <%
       const catIcons = {
-        'metabolicos': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4.5"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(120 12 12)"/></svg>',
+        'metabolicos': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.5"/><ellipse cx="12" cy="12" rx="10" ry="4.5"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(120 12 12)"/></svg>',
         'recuperacion': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>',
+        'longevidad': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2a2.5 2.5 0 0 0-4.96-.46A2.5 2.5 0 0 0 6 4a2.5 2.5 0 0 0 .9 4.42A2.5 2.5 0 0 0 9 13l2 6 2-6a2.5 2.5 0 0 0 2.1-4.58A2.5 2.5 0 0 0 18 4a2.5 2.5 0 0 0-3.54-2z"/></svg>',
         'cognitivos': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15A2.5 2.5 0 0 1 9.5 22 2.5 2.5 0 0 1 7 19.5a2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58A2.5 2.5 0 0 1 4.5 6.5a2.5 2.5 0 0 1 5-2.5z"/><path d="M14.5 2a2.5 2.5 0 0 0-2.5 2.5v15a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.8-4.84 2.5 2.5 0 0 0-4-2"/></svg>',
-        'longevidad': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2a2.5 2.5 0 0 0-4.96-.46A2.5 2.5 0 0 0 6 4a2.5 2.5 0 0 0 .9 4.42A2.5 2.5 0 0 0 9 13l2 6 2-6a2.5 2.5 0 0 0 2.1-4.58A2.5 2.5 0 0 0 18 4a2.5 2.5 0 0 0-3.54-2z"/><path d="M19 17l1 1 1-1"/><path d="M3 19l1.5 1.5L6 19"/></svg>',
         'inmunidad': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>',
         'hormona-de-crecimiento': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>',
         'reproductivos': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
         'combos': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 9 4-9 4-9-4 9-4z"/><path d="m3 12 9 4 9-4"/><path d="m3 18 9 4 9-4"/></svg>',
-        'estetica-y-piel': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="m5.6 5.6 2.1 2.1"/><path d="m16.3 16.3 2.1 2.1"/><path d="m5.6 18.4 2.1-2.1"/><path d="m16.3 7.7 2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg>',
+        'estetica-y-piel': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>',
         'accesorios': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2 22 6"/><path d="m17 7 5-5"/><path d="m14 6 4 4"/><path d="M3 21 14 10"/><path d="m6 14 4 4"/></svg>'
       };
-      const defaultIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>';
+      const defaultCatIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>';
     %>
     <% categories.slice(0, 5).forEach(c => { %>
-      <a href="/products?category=<%= c.slug %>" class="category-card">
-        <span class="category-card-icon" aria-hidden="true"><%- catIcons[c.slug] || defaultIcon %></span>
+      <a href="/products?category=<%= c.slug %>" class="category-tile" data-letter="<%= c.name.charAt(0) %>">
+        <span class="category-tile-icon" aria-hidden="true"><%- catIcons[c.slug] || defaultCatIcon %></span>
         <h3><%= c.name %></h3>
         <p><%= c.description %></p>
       </a>
@@ -85,7 +86,7 @@
   </div>
 </section>
 
-<section class="section">
+<section class="section section-featured">
   <div class="section-head">
     <h2><%= t('section.featured') %></h2>
     <a href="/products" class="link"><%= t('section.viewAll') %></a>
@@ -93,8 +94,8 @@
   <% if (featured.length === 0) { %>
     <p class="empty">—</p>
   <% } else { %>
-    <div class="product-grid">
-      <% featured.forEach(p => { %>
+    <div class="product-grid featured-grid">
+      <% featured.slice(0, 4).forEach(p => { %>
         <%- include('partials/product_card', { p }) %>
       <% }) %>
     </div>

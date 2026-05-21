@@ -2,54 +2,23 @@
 
   <footer class="site-footer">
     <div class="container footer-grid">
-      <div class="footer-brand-col">
+      <div class="footer-brand">
         <img src="/static/img/peptive-wordmark-approved.png" alt="<%= settings.store_name %>" class="footer-brand-mark" />
-        <p class="footer-brand-blurb">Premium research peptides with uncompromising purity. <%= settings.store_tagline %></p>
-        <div class="footer-socials" aria-label="Social">
-          <% if (settings.whatsapp) { %>
-            <a href="https://wa.me/<%= settings.whatsapp %>" target="_blank" rel="noopener" aria-label="WhatsApp">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.33 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            </a>
-          <% } %>
-          <a href="mailto:<%= settings.contact_email %>" aria-label="Email">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
-          </a>
-          <a href="/products" aria-label="Catalog">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-          </a>
-        </div>
+        <p><%= settings.store_tagline %></p>
       </div>
-      <div class="footer-col">
+      <div>
         <h4><%= t('footer.contact') %></h4>
-        <p>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
-          <a href="mailto:<%= settings.contact_email %>"><%= settings.contact_email %></a>
-        </p>
-        <p>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.33 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          <%= settings.contact_phone %>
-        </p>
-        <p>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-          Mon – Fri · 9AM – 6PM EST
-        </p>
+        <p>📧 <%= settings.contact_email %></p>
+        <p>📞 <%= settings.contact_phone %></p>
+        <% if (settings.whatsapp) { %>
+          <p><a href="https://wa.me/<%= settings.whatsapp %>" target="_blank">WhatsApp</a></p>
+        <% } %>
       </div>
-      <div class="footer-col">
+      <div>
         <h4><%= t('footer.shipping') %></h4>
-        <p>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg>
-          Worldwide Shipping
-        </p>
-        <p>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 16-9 5-9-5V8l9-5 9 5z"/><path d="m3 8 9 5 9-5"/><path d="M12 22V13"/></svg>
-          Discreet Packaging
-        </p>
-        <p>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
-          Orders ship within 24 – 48h
-        </p>
+        <p><%= settings.shipping_note %></p>
       </div>
-      <div class="footer-col">
+      <div>
         <h4><%= t('footer.categories') %></h4>
         <% categories.slice(0, 6).forEach(c => { %>
           <p><a href="/products?category=<%= c.slug %>"><%= c.name %></a></p>
