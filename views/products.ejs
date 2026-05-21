@@ -1,0 +1,45 @@
+<% const title = t('catalog.title') %>
+<%- include('partials/header', { title }) %>
+
+<div class="catalog-layout">
+  <aside class="filters">
+    <h3><%= t('nav.categories') %></h3>
+    <ul class="filter-list">
+      <li><a href="/products" class="<%= !filter.categoria ? 'active' : '' %>"><%= t('catalog.allCategories') %></a></li>
+      <% categories.forEach(c => { %>
+        <li><a href="/products?category=<%= c.slug %>" class="<%= filter.categoria === c.slug ? 'active' : '' %>"><%= c.name %></a></li>
+      <% }) %>
+    </ul>
+  </aside>
+
+  <div class="catalog-main">
+    
+    <div class="catalog-head">
+      <h1><%= t('catalog.title') %></h1>
+      <form method="get" class="sort-form">
+        <% if (filter.categoria) { %><input type="hidden" name="category" value="<%= filter.categoria %>" /><% } %>
+        <% if (filter.q) { %><input type="hidden" name="q" value="<%= filter.q %>" /><% } %>
+        <label><%= t('catalog.sortLabel') %>
+          <select name="sort" onchange="this.form.submit()">
+            <option value="" <%= !filter.orden ? 'selected' : '' %>><%= t('catalog.sort.relevance') %></option>
+            <option value="price_asc" <%= filter.orden === 'price_asc' ? 'selected' : '' %>><%= t('catalog.sort.priceAsc') %></option>
+            <option value="price_desc" <%= filter.orden === 'price_desc' ? 'selected' : '' %>><%= t('catalog.sort.priceDesc') %></option>
+            <option value="name" <%= filter.orden === 'name' ? 'selected' : '' %>><%= t('catalog.sort.name') %></option>
+          </select>
+        </label>
+      </form>
+    </div>
+
+    <% if (products.length === 0) { %>
+      <p class="empty"><%= t('catalog.empty') %></p>
+    <% } else { %>
+      <div class="product-grid">
+        <% products.forEach(p => { %>
+          <%- include('partials/product_card', { p }) %>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,30 +1,29 @@
 <% const title = t('nav.home') %>
 <%- include('partials/header', { title }) %>
 
-<section class="hero hero-peptive">
-  <div class="hero-molecules" aria-hidden="true"></div>
+<section class="hero hero-peptive hero-centered">
   <div class="hero-content">
-    <span class="hero-eyebrow"><%= t('hero.eyebrow') %></span>
-    <h1 class="hero-title">
-      <span class="hero-wordmark">PEPTIVE</span>
+    <h1 class="hero-title hero-title-img">
+      <img src="/static/img/peptive-wordmark-approved.png" alt="PEPTIVE — Science. Purity. Power." class="hero-wordmark-img" />
+      <span class="visually-hidden">PEPTIVE — <%= settings.store_tagline %></span>
     </h1>
-    <p class="hero-tagline"><%= settings.store_tagline %></p>
+    <span class="hero-pill">Research-grade peptides · HPLC ≥99%</span>
     <% if (discountPct > 0) { %>
       <p class="hero-promo"><%= t('hero.promo', { pct: discountPct }) %></p>
     <% } %>
     <div class="hero-actions">
-      <a href="/productos" class="btn btn-primary btn-lg"><%= t('hero.cta.catalog') %>
+      <a href="/products" class="btn btn-primary btn-lg"><%= t('hero.cta.catalog') %>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
       </a>
       <% if (settings.whatsapp) { %>
         <a href="https://wa.me/<%= settings.whatsapp %>" target="_blank" rel="noopener" class="btn btn-ghost btn-lg"><%= t('hero.cta.whatsapp') %></a>
       <% } %>
     </div>
-    <div class="hero-features">
-      <div>✓ <%= t('hero.f1') %></div>
-      <div>✓ <%= t('hero.f2') %></div>
-      <div>✓ <%= t('hero.f3') %></div>
-    </div>
+    <ul class="hero-dots">
+      <li>HPLC Purity &gt;99%</li>
+      <li>Per-lot COA</li>
+      <li>Worldwide Shipping</li>
+    </ul>
   </div>
 </section>
 
@@ -55,14 +54,30 @@
   </div>
 </section>
 
-<section class="section">
+<section class="section section-categories">
   <div class="section-head">
     <h2><%= t('section.categories') %></h2>
-    <a href="/productos" class="link"><%= t('section.viewAll') %></a>
+    <a href="/products" class="link"><%= t('section.viewAll') %> →</a>
   </div>
-  <div class="category-grid">
-    <% categories.forEach(c => { %>
-      <a href="/productos?categoria=<%= c.slug %>" class="category-tile" data-letter="<%= c.name.charAt(0) %>">
+  <div class="category-grid category-grid-icons">
+    <%
+      const catIcons = {
+        'metabolicos': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4.5"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(120 12 12)"/></svg>',
+        'recuperacion': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>',
+        'cognitivos': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15A2.5 2.5 0 0 1 9.5 22 2.5 2.5 0 0 1 7 19.5a2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58A2.5 2.5 0 0 1 4.5 6.5a2.5 2.5 0 0 1 5-2.5z"/><path d="M14.5 2a2.5 2.5 0 0 0-2.5 2.5v15a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.8-4.84 2.5 2.5 0 0 0-4-2"/></svg>',
+        'longevidad': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2a2.5 2.5 0 0 0-4.96-.46A2.5 2.5 0 0 0 6 4a2.5 2.5 0 0 0 .9 4.42A2.5 2.5 0 0 0 9 13l2 6 2-6a2.5 2.5 0 0 0 2.1-4.58A2.5 2.5 0 0 0 18 4a2.5 2.5 0 0 0-3.54-2z"/><path d="M19 17l1 1 1-1"/><path d="M3 19l1.5 1.5L6 19"/></svg>',
+        'inmunidad': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>',
+        'hormona-de-crecimiento': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>',
+        'reproductivos': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+        'combos': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 9 4-9 4-9-4 9-4z"/><path d="m3 12 9 4 9-4"/><path d="m3 18 9 4 9-4"/></svg>',
+        'estetica-y-piel': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="m5.6 5.6 2.1 2.1"/><path d="m16.3 16.3 2.1 2.1"/><path d="m5.6 18.4 2.1-2.1"/><path d="m16.3 7.7 2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg>',
+        'accesorios': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2 22 6"/><path d="m17 7 5-5"/><path d="m14 6 4 4"/><path d="M3 21 14 10"/><path d="m6 14 4 4"/></svg>'
+      };
+      const defaultIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>';
+    %>
+    <% categories.slice(0, 5).forEach(c => { %>
+      <a href="/products?category=<%= c.slug %>" class="category-card">
+        <span class="category-card-icon" aria-hidden="true"><%- catIcons[c.slug] || defaultIcon %></span>
         <h3><%= c.name %></h3>
         <p><%= c.description %></p>
       </a>
@@ -73,7 +88,7 @@
 <section class="section">
   <div class="section-head">
     <h2><%= t('section.featured') %></h2>
-    <a href="/productos" class="link"><%= t('section.viewAll') %></a>
+    <a href="/products" class="link"><%= t('section.viewAll') %></a>
   </div>
   <% if (featured.length === 0) { %>
     <p class="empty">—</p>

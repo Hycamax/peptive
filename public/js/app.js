@@ -6,12 +6,26 @@
   const btn = document.getElementById('themeToggle');
   if (btn) {
     btn.addEventListener('click', () => {
-      const cur = root.getAttribute('data-theme') || 'dark';
+      const cur = root.getAttribute('data-theme') || 'light';
       const next = cur === 'dark' ? 'light' : 'dark';
       root.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
     });
   }
+
+  // Cart badge pop on count increase between navigations
+  try {
+    const badge = document.querySelector('.cart-badge');
+    if (badge) {
+      const current = parseInt(badge.textContent || '0', 10) || 0;
+      const prev = parseInt(sessionStorage.getItem('cartCount') || '0', 10) || 0;
+      if (current > prev) {
+        badge.classList.add('pop');
+        setTimeout(() => badge.classList.remove('pop'), 600);
+      }
+      sessionStorage.setItem('cartCount', String(current));
+    }
+  } catch (_) {}
 
   document.addEventListener('click', async (e) => {
     const t = e.target.closest('.btn-copy');

@@ -190,7 +190,14 @@ app.get('/', (req, res) => {
 });
 
 app.get('/productos', (req, res) => {
-  const { categoria, q, orden } = req.query;
+  const qs = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '';
+  res.redirect(301, '/products' + qs);
+});
+app.get('/producto/:slug', (req, res) => res.redirect(301, '/product/' + req.params.slug));
+app.get('/carrito', (req, res) => res.redirect(301, '/cart'));
+
+app.get('/products', (req, res) => {
+  const { category: categoria, q, sort: orden } = req.query;
   let sql = `
     SELECT p.*, c.name AS category_name, c.slug AS category_slug
     FROM products p LEFT JOIN categories c ON c.id = p.category_id
@@ -200,17 +207,17 @@ app.get('/productos', (req, res) => {
   if (categoria) { sql += ' AND c.slug = ?'; params.push(categoria); }
   if (q) { sql += ' AND (p.name LIKE ? OR p.short_description LIKE ?)'; params.push(`%${q}%`, `%${q}%`); }
   switch (orden) {
-    case 'precio_asc': sql += ' ORDER BY p.price ASC'; break;
-    case 'precio_desc': sql += ' ORDER BY p.price DESC'; break;
-    case 'nombre': sql += ' ORDER BY p.name ASC'; break;
+    case 'price_asc': case 'precio_asc': sql += ' ORDER BY p.price ASC'; break;
+    case 'price_desc': case 'precio_desc': sql += ' ORDER BY p.price DESC'; break;
+    case 'name': case 'nombre': sql += ' ORDER BY p.name ASC'; break;
     default: sql += ' ORDER BY p.featured DESC, p.created_at DESC';
   }
   const products = db.prepare(sql).all(...params);
   for (const p of products) { p.sizesArr = parseSizes(p); localizeProduct(p, res.locals.lang); }
-  res.render('productos', { products, filter: { categoria, q, orden } });
+  res.render('products', { products, filter: { categoria, q, orden } });
 });
 
-app.get('/producto/:slug', (req, res) => {
+app.get('/product/:slug', (req, res) => {
   const p = db.prepare(`
     SELECT p.*, c.name AS category_name, c.slug AS category_slug
     FROM products p LEFT JOIN categories c ON c.id = p.category_id
@@ -223,21 +230,21 @@ app.get('/producto/:slug', (req, res) => {
     SELECT * FROM products WHERE category_id = ? AND id != ? AND active = 1 LIMIT 4
   `).all(p.category_id, p.id);
   for (const r of related) { r.sizesArr = parseSizes(r); localizeProduct(r, res.locals.lang); }
-  res.render('producto', { p, related });
+  res.render('product', { p, related });
 });
 
-app.get('/categoria/:slug', (req, res) => {
-  res.redirect(`/productos?categoria=${encodeURIComponent(req.params.slug)}`);
+app.get('/category/:slug', (req, res) => {
+  res.redirect(`/products?category=${encodeURIComponent(req.params.slug)}`);
 });
 
-app.post('/carrito/agregar', (req, res) => {
+app.post('/cart/add', (req, res) => {
   const productId = parseInt(req.body.product_id, 10);
   const reqQty = Math.max(1, parseInt(req.body.quantity, 10) || 1);
   const requestedSize = (req.body.size || '').trim();
   const p = db.prepare('SELECT id, name, name_en, stock, sizes FROM products WHERE id = ? AND active = 1').get(productId);
   if (!p) {
     req.session.flash = { type: 'error', message: res.locals.t('flash.notFound') };
-    return res.redirect('/productos');
+    return res.redirect('/products');
   }
   const displayName = res.locals.lang === 'en' && p.name_en ? p.name_en : p.name;
   const sizes = parseSizes(p);
@@ -252,7 +259,7 @@ app.post('/carrito/agregar', (req, res) => {
   const fullName = sizeLabel ? `${displayName} ${sizeLabel}` : displayName;
   if (availStock <= 0) {
     req.session.flash = { type: 'error', message: res.locals.t('flash.soldOut', { name: fullName }) };
-    return res.redirect(req.body.redirect || '/carrito');
+    return res.redirect(req.body.redirect || '/cart');
   }
   req.session.cart = req.session.cart || [];
   const existing = req.session.cart.find(i => i.id === p.id && (i.size || '') === sizeLabel);
@@ -266,39 +273,39 @@ app.post('/carrito/agregar', (req, res) => {
   } else {
     req.session.flash = { type: 'success', message: res.locals.t('flash.added', { name: fullName }) };
   }
-  res.redirect(req.body.redirect || '/carrito');
+  res.redirect(req.body.redirect || '/cart');
 });
 
-app.post('/carrito/actualizar', (req, res) => {
+app.post('/cart/update', (req, res) => {
   const cart = req.session.cart || [];
   const qty = req.body.quantity || {};
   req.session.cart = cart
     .map((i, idx) => ({ id: i.id, size: i.size || '', quantity: Math.max(0, parseInt(qty[idx], 10) || 0) }))
     .filter(i => i.quantity > 0);
-  res.redirect('/carrito');
+  res.redirect('/cart');
 });
 
-app.post('/carrito/eliminar', (req, res) => {
+app.post('/cart/remove', (req, res) => {
   const id = parseInt(req.body.product_id, 10);
   const size = (req.body.size || '').trim();
   req.session.cart = (req.session.cart || []).filter(i => !(i.id === id && (i.size || '') === size));
-  res.redirect('/carrito');
+  res.redirect('/cart');
 });
 
-app.get('/carrito', (req, res) => {
+app.get('/cart', (req, res) => {
   const { items, dirty } = hydrateCart(req.session.cart || [], res.locals.discountPct);
   if (dirty) req.session.cart = items.map(i => ({ id: i.id, size: i.size || '', quantity: i.quantity }));
   const subtotalBase = items.reduce((s, i) => s + i.basePrice * i.quantity, 0);
   const total = items.reduce((s, i) => s + i.lineTotal, 0);
   const savings = Math.round((subtotalBase - total) * 100) / 100;
-  res.render('carrito', { items, subtotalBase, total, savings });
+  res.render('cart', { items, subtotalBase, total, savings });
 });
 
 app.get('/checkout', (req, res) => {
   const { items, dirty } = hydrateCart(req.session.cart || [], res.locals.discountPct);
   if (!items.length) {
     if (dirty) req.session.cart = [];
-    return res.redirect('/carrito');
+    return res.redirect('/cart');
   }
   if (dirty) req.session.cart = items.map(i => ({ id: i.id, size: i.size || '', quantity: i.quantity }));
   const total = items.reduce((s, i) => s + i.lineTotal, 0);
@@ -309,12 +316,12 @@ app.post('/checkout', (req, res) => {
   const { items, dirty } = hydrateCart(req.session.cart || [], res.locals.discountPct);
   if (!items.length) {
     if (dirty) req.session.cart = [];
-    return res.redirect('/carrito');
+    return res.redirect('/cart');
   }
   if (dirty) {
     req.session.cart = items.map(i => ({ id: i.id, size: i.size || '', quantity: i.quantity }));
     req.session.flash = { type: 'error', message: res.locals.t('flash.cartChanged') };
-    return res.redirect('/carrito');
+    return res.redirect('/cart');
   }
 
   const b = req.body;
@@ -377,7 +384,7 @@ app.post('/checkout', (req, res) => {
   } catch (e) {
     db.exec('ROLLBACK');
     req.session.flash = { type: 'error', message: e.message };
-    return res.redirect('/carrito');
+    return res.redirect('/cart');
   }
 
   req.session.cart = [];
@@ -419,31 +426,31 @@ app.get('/admin', requireAdmin, (req, res) => {
   res.render('admin/dashboard', { stats, recent });
 });
 
-app.get('/admin/productos', requireAdmin, (req, res) => {
+app.get('/admin/products', requireAdmin, (req, res) => {
   const products = db.prepare(`
     SELECT p.*, c.name AS category_name
     FROM products p LEFT JOIN categories c ON c.id = p.category_id
     ORDER BY p.created_at DESC
   `).all();
-  res.render('admin/productos', { products });
+  res.render('admin/products', { products });
 });
 
-app.get('/admin/productos/nuevo', requireAdmin, (req, res) => {
+app.get('/admin/products/nuevo', requireAdmin, (req, res) => {
   res.render('admin/producto_form', { p: null });
 });
 
-app.get('/admin/productos/:id/editar', requireAdmin, (req, res) => {
+app.get('/admin/products/:id/editar', requireAdmin, (req, res) => {
   const p = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
-  if (!p) return res.redirect('/admin/productos');
+  if (!p) return res.redirect('/admin/products');
   res.render('admin/producto_form', { p });
 });
 
-app.post('/admin/productos/guardar', requireAdmin, upload.single('image'), (req, res) => {
+app.post('/admin/products/guardar', requireAdmin, upload.single('image'), (req, res) => {
   const b = req.body;
   const name = (b.name || '').trim();
   if (!name) {
     req.session.flash = { type: 'error', message: 'El nombre es requerido' };
-    return res.redirect(b.id ? `/admin/productos/${b.id}/editar` : '/admin/productos/nuevo');
+    return res.redirect(b.id ? `/admin/products/${b.id}/editar` : '/admin/products/nuevo');
   }
   const slugVal = b.slug ? slug(b.slug) : slug(name);
   const featured = b.featured ? 1 : 0;
@@ -473,17 +480,17 @@ app.post('/admin/productos/guardar', requireAdmin, upload.single('image'), (req,
   } catch (e) {
     if (String(e.message).includes('UNIQUE')) {
       req.session.flash = { type: 'error', message: 'Ese slug ya existe — usa uno distinto' };
-      return res.redirect(b.id ? `/admin/productos/${b.id}/editar` : '/admin/productos/nuevo');
+      return res.redirect(b.id ? `/admin/products/${b.id}/editar` : '/admin/products/nuevo');
     }
     throw e;
   }
-  res.redirect('/admin/productos');
+  res.redirect('/admin/products');
 });
 
-app.post('/admin/productos/:id/eliminar', requireAdmin, (req, res) => {
+app.post('/admin/products/:id/eliminar', requireAdmin, (req, res) => {
   db.prepare('DELETE FROM products WHERE id = ?').run(req.params.id);
   req.session.flash = { type: 'success', message: 'Producto eliminado' };
-  res.redirect('/admin/productos');
+  res.redirect('/admin/products');
 });
 
 app.get('/admin/categorias', requireAdmin, (req, res) => {
@@ -596,7 +603,7 @@ app.use((req, res) => res.status(404).render('404'));
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError || /Formato de imagen no soportado/.test(err.message || '')) {
     req.session.flash = { type: 'error', message: err.message };
-    return res.redirect(req.get('referer') || '/admin/productos');
+    return res.redirect(req.get('referer') || '/admin/products');
   }
   console.error('[error]', err);
   res.status(500).render('500', { message: IS_PROD ? null : err.message });

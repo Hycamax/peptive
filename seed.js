@@ -13,7 +13,7 @@ const imageForSlug = (slug) => {
 setSetting('store_name', 'PEPTIVE');
 setSetting('store_tagline', 'SCIENCE. PURITY. POWER.');
 setSetting('primary_color', '#B8860B');
-setSetting('theme', 'dark');
+setSetting('theme', 'light');
 setSetting('currency', 'USD');
 setSetting('currency_symbol', '$');
 setSetting('discount_percent', '0');

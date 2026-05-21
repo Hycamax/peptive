@@ -5,9 +5,9 @@
   <aside class="filters">
     <h3><%= t('nav.categories') %></h3>
     <ul class="filter-list">
-      <li><a href="/productos" class="<%= !filter.categoria ? 'active' : '' %>"><%= t('catalog.allCategories') %></a></li>
+      <li><a href="/products" class="<%= !filter.categoria ? 'active' : '' %>"><%= t('catalog.allCategories') %></a></li>
       <% categories.forEach(c => { %>
-        <li><a href="/productos?categoria=<%= c.slug %>" class="<%= filter.categoria === c.slug ? 'active' : '' %>"><%= c.name %></a></li>
+        <li><a href="/products?category=<%= c.slug %>" class="<%= filter.categoria === c.slug ? 'active' : '' %>"><%= c.name %></a></li>
       <% }) %>
     </ul>
   </aside>

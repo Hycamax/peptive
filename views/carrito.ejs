@@ -5,9 +5,9 @@
 
 <% if (!items.length) { %>
   <p class="empty"><%= t('cart.empty') %></p>
-  <a href="/productos" class="btn btn-primary"><%= t('cart.viewProducts') %></a>
+  <a href="/products" class="btn btn-primary"><%= t('cart.viewProducts') %></a>
 <% } else { %>
-  <form method="post" action="/carrito/actualizar">
+  <form method="post" action="/cart/update">
     <table class="cart-table">
       <thead>
         <tr><th><%= t('cart.col.product') %></th><th><%= t('cart.col.size') %></th><th><%= t('cart.col.price') %></th><th><%= t('cart.col.qty') %></th><th><%= t('cart.col.subtotal') %></th><th></th></tr>
@@ -15,7 +15,7 @@
       <tbody>
         <% items.forEach((i, idx) => { %>
           <tr>
-            <td><a href="/producto/<%= i.slug %>"><%= i.name %></a></td>
+            <td><a href="/product/<%= i.slug %>"><%= i.name %></a></td>
             <td><% if (i.size) { %><span class="size-tag"><%= i.size %></span><% } else { %>—<% } %></td>
             <td>
               <% if (discountPct > 0) { %>
@@ -41,7 +41,7 @@
   </form>
 
   <% items.forEach((i, idx) => { %>
-    <form method="post" action="/carrito/eliminar" id="rm-<%= idx %>" style="display:none">
+    <form method="post" action="/cart/remove" id="rm-<%= idx %>" style="display:none">
       <input type="hidden" name="product_id" value="<%= i.id %>" />
       <input type="hidden" name="size" value="<%= i.size || '' %>" />
     </form>

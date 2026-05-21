@@ -1,0 +1,64 @@
+<% const title = t('nav.cart') %>
+<%- include('partials/header', { title }) %>
+
+<h1><%= t('cart.title') %></h1>
+
+<% if (!items.length) { %>
+  <div class="empty-state">
+    <div class="empty-state-icon" aria-hidden="true">
+      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    </div>
+    <p class="empty-state-text"><%= t('cart.empty') %></p>
+    <a href="/products" class="btn btn-primary"><%= t('cart.viewProducts') %></a>
+  </div>
+<% } else { %>
+  <form method="post" action="/cart/update">
+    <table class="cart-table">
+      <thead>
+        <tr><th><%= t('cart.col.product') %></th><th><%= t('cart.col.size') %></th><th><%= t('cart.col.price') %></th><th><%= t('cart.col.qty') %></th><th><%= t('cart.col.subtotal') %></th><th></th></tr>
+      </thead>
+      <tbody>
+        <% items.forEach((i, idx) => { %>
+          <tr>
+            <td><a href="/product/<%= i.slug %>"><%= i.name %></a></td>
+            <td><% if (i.size) { %><span class="size-tag"><%= i.size %></span><% } else { %>—<% } %></td>
+            <td>
+              <% if (discountPct > 0) { %>
+                <span class="price-old small"><%= fmt(i.basePrice) %></span>
+              <% } %>
+              <strong><%= fmt(i.unitPrice) %></strong>
+            </td>
+            <td>
+              <input type="number" name="quantity[<%= idx %>]" value="<%= i.quantity %>" min="0" max="<%= i.stock %>" class="qty-input"/>
+            </td>
+            <td><strong><%= fmt(i.lineTotal) %></strong></td>
+            <td>
+              <button type="submit" form="rm-<%= idx %>" class="btn btn-small btn-ghost" aria-label="<%= t('cart.remove') %>">✕</button>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <div class="cart-actions">
+      <button type="submit" class="btn btn-ghost"><%= t('cart.update') %></button>
+      <a href="/checkout" class="btn btn-primary"><%= t('cart.checkout') %></a>
+    </div>
+  </form>
+
+  <% items.forEach((i, idx) => { %>
+    <form method="post" action="/cart/remove" id="rm-<%= idx %>" style="display:none">
+      <input type="hidden" name="product_id" value="<%= i.id %>" />
+      <input type="hidden" name="size" value="<%= i.size || '' %>" />
+    </form>
+  <% }) %>
+
+  <div class="cart-summary">
+    <% if (savings > 0) { %>
+      <div class="summary-row"><span><%= t('cart.subtotalRaw') %></span><span class="price-old"><%= fmt(subtotalBase) %></span></div>
+      <div class="summary-row"><span><%= t('cart.discount', { pct: discountPct }) %></span><span class="save">- <%= fmt(savings) %></span></div>
+    <% } %>
+    <div class="summary-row total"><span><%= t('cart.total') %></span><span><%= fmt(total) %></span></div>
+  </div>
+<% } %>
+
+<%- include('partials/footer') %>

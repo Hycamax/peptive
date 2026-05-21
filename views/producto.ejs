@@ -10,8 +10,8 @@
 
 <nav class="breadcrumb">
   <a href="/"><%= t('nav.home') %></a> ›
-  <a href="/productos"><%= t('nav.products') %></a> ›
-  <% if (p.category_slug) { %><a href="/productos?categoria=<%= p.category_slug %>"><%= p.category_name %></a> ›<% } %>
+  <a href="/products"><%= t('nav.products') %></a> ›
+  <% if (p.category_slug) { %><a href="/products?category=<%= p.category_slug %>"><%= p.category_name %></a> ›<% } %>
   <span><%= p.name %></span>
 </nav>
 
@@ -91,9 +91,9 @@
       </li>
     </ul>
 
-    <form method="post" action="/carrito/agregar" class="add-to-cart-form" id="addForm">
+    <form method="post" action="/cart/add" class="add-to-cart-form" id="addForm">
       <input type="hidden" name="product_id" value="<%= p.id %>" />
-      <input type="hidden" name="redirect" value="/producto/<%= p.slug %>" />
+      <input type="hidden" name="redirect.*value="/product/<%= p.slug %>" />
       <% if (sizesArr) { %>
         <input type="hidden" name="size" id="sizeField" value="<%= defaultSize.label %>" />
       <% } %>
