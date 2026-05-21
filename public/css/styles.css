@@ -191,6 +191,17 @@ h3 { font-weight: 600; }
 .hero-wordmark { display: inline-block; font-family: var(--font-display); font-weight: 700; letter-spacing: 0.12em; background: var(--accent-gradient); background-size: 200% auto; animation: gradient-shift 4s ease infinite; -webkit-background-clip: text; background-clip: text; color: transparent; }
 .hero-y { color: var(--primary); -webkit-text-fill-color: var(--primary); position: relative; display: inline-block; }
 
+/* Centered hero — matches homepage-mockup-light: big wordmark as the focal point */
+.hero-peptive { text-align: center; padding: 84px 32px 92px; }
+.hero-peptive .hero-content { max-width: 840px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
+.hero-peptive::after { left: 50%; top: 46%; right: auto; transform: translate(-50%, -50%); width: 760px; height: 760px; animation: none; opacity: .9; }
+.hero-peptive::before { mask-image: radial-gradient(ellipse at 50% 45%, black 30%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse at 50% 45%, black 30%, transparent 75%); }
+.hero-peptive .hero-eyebrow { margin-bottom: 24px; }
+.hero-peptive .hero-title { font-size: clamp(3.4rem, 9vw, 6.4rem); margin: 0 0 14px; letter-spacing: .14em; }
+.hero-peptive .hero-tagline { font-family: var(--font-display); text-transform: uppercase; font-weight: 600; color: var(--gold); letter-spacing: .42em; text-indent: .42em; font-size: clamp(.78rem, 1.5vw, 1.05rem); margin: 0 0 4px; max-width: none; }
+.hero-peptive .hero-actions { justify-content: center; margin-top: 30px; }
+.hero-peptive .hero-features { justify-content: center; margin-top: 30px; }
+
 /* ========================================================================
    Buttons
    ======================================================================== */
@@ -221,6 +232,8 @@ h3 { font-weight: 600; }
 .category-tile::after { content: attr(data-letter); position: absolute; right: 12px; bottom: -8px; font-family: var(--font-display); font-size: 5.5rem; font-weight: 700; color: var(--gold); opacity: .06; pointer-events: none; z-index: -1; line-height: 1; }
 .category-tile:hover { transform: translateY(-4px); border-color: rgba(184,134,11,.35); color: var(--text); box-shadow: var(--card-hover-shadow); }
 .category-tile:hover::before { opacity: 1; }
+.category-icon { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; margin-bottom: 14px; background: var(--accent-gradient-soft); color: var(--gold); border: 1px solid rgba(184,134,11,.22); transition: background var(--t), color var(--t), transform var(--t); }
+.category-tile:hover .category-icon { transform: translateY(-2px) scale(1.05); }
 .category-tile h3 { margin: 0 0 8px; color: var(--text); font-size: 1.05rem; }
 .category-tile p { margin: 0; color: var(--text-muted); font-size: .85rem; line-height: 1.5; }
 
