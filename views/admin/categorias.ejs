@@ -1,0 +1,43 @@
+<%- include('_layout_head') %>
+
+<div class="admin-head"><h1>Categorías</h1></div>
+
+<div style="display:grid; gap:12px; max-width:900px;">
+  <% cats.forEach(c => { %>
+    <form method="post" action="/admin/categorias/guardar" class="admin-form" style="padding:16px;">
+      <input type="hidden" name="id" value="<%= c.id %>" />
+      <div class="grid-2">
+        <label>Nombre<input type="text" name="name" value="<%= c.name %>" required /></label>
+        <label>Slug<input type="text" name="slug" value="<%= c.slug %>" /></label>
+      </div>
+      <div class="grid-2">
+        <label>Descripción<input type="text" name="description" value="<%= c.description %>" /></label>
+        <label>Orden<input type="number" name="sort_order" value="<%= c.sort_order %>" /></label>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-small">Guardar</button>
+        <span style="color:var(--text-muted); font-size:.85rem; align-self:center;"><%= c.product_count %> productos</span>
+      </div>
+    </form>
+    <form method="post" action="/admin/categorias/<%= c.id %>/eliminar" onsubmit="return confirm('¿Eliminar la categoría \'<%= c.name %>\'? Los productos quedarán sin categoría.')" style="margin-top:-12px;">
+      <button type="submit" class="btn btn-small btn-danger">Eliminar categoría</button>
+    </form>
+  <% }) %>
+
+  <hr style="border-color:var(--border); margin: 16px 0;" />
+
+  <form method="post" action="/admin/categorias/guardar" class="admin-form">
+    <h3 style="margin:0">Nueva categoría</h3>
+    <div class="grid-2">
+      <label>Nombre *<input type="text" name="name" required /></label>
+      <label>Slug<input type="text" name="slug" placeholder="se genera automáticamente" /></label>
+    </div>
+    <div class="grid-2">
+      <label>Descripción<input type="text" name="description" /></label>
+      <label>Orden<input type="number" name="sort_order" value="<%= cats.length %>" /></label>
+    </div>
+    <button type="submit" class="btn btn-primary">+ Crear categoría</button>
+  </form>
+</div>
+
+<%- include('_layout_foot') %>

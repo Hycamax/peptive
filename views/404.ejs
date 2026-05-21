@@ -1,0 +1,8 @@
+<% const title = '404' %>
+<%- include('partials/header', { title }) %>
+<div class="ok-box">
+  <h1><%= t('404.title') %></h1>
+  <p><%= t('404.body') %></p>
+  <a href="/" class="btn btn-primary"><%= t('404.cta') %></a>
+</div>
+<%- include('partials/footer') %>

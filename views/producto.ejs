@@ -1,0 +1,185 @@
+<% const title = p.name %>
+<%- include('partials/header', { title }) %>
+
+<%
+  const sizesArr = p.sizesArr;
+  const defaultSize = sizesArr ? sizesArr[0] : null;
+  const startPrice = defaultSize ? defaultSize.price : p.price;
+  const startStock = defaultSize ? defaultSize.stock : p.stock;
+%>
+
+<nav class="breadcrumb">
+  <a href="/"><%= t('nav.home') %></a> ›
+  <a href="/productos"><%= t('nav.products') %></a> ›
+  <% if (p.category_slug) { %><a href="/productos?categoria=<%= p.category_slug %>"><%= p.category_name %></a> ›<% } %>
+  <span><%= p.name %></span>
+</nav>
+
+<div class="product-detail">
+  <div class="product-detail-image">
+    <% if (p.image) { %>
+      <img src="<%= p.image %>" alt="<%= p.name %>" />
+    <% } else { %>
+      <svg class="vial-icon big branded" id="detailVial" viewBox="0 0 100 140" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="detail-liq" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#B8860B" stop-opacity="0.45"/>
+            <stop offset="1" stop-color="#0A0A14" stop-opacity="0.90"/>
+          </linearGradient>
+          <linearGradient id="detail-cap" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#D4A017"/>
+            <stop offset="1" stop-color="#8B6914"/>
+          </linearGradient>
+        </defs>
+        <rect x="28" y="6" width="44" height="14" rx="2" fill="url(#detail-cap)"/>
+        <rect x="28" y="18" width="44" height="3" fill="#B8860B"/>
+        <rect x="36" y="21" width="28" height="11" fill="currentColor" fill-opacity=".10" stroke="currentColor" stroke-width=".4" stroke-opacity=".3"/>
+        <rect x="22" y="32" width="56" height="100" rx="6" fill="currentColor" fill-opacity=".06" stroke="#B8860B" stroke-width=".6" stroke-opacity=".4"/>
+        <path d="M22 88 Q50 84 78 88 L78 126 Q78 132 72 132 L28 132 Q22 132 22 126 Z" fill="url(#detail-liq)"/>
+        <rect x="26" y="50" width="48" height="46" fill="#FAF7F2"/>
+        <rect x="26" y="50" width="48" height="2" fill="#0A0A14"/>
+        <rect x="26" y="94" width="48" height="2" fill="#B8860B"/>
+        <text x="50" y="60" text-anchor="middle" font-size="4.5" fill="#0A0A14" font-weight="800" font-family="Inter, sans-serif" letter-spacing="1.4">PEPTIVE</text>
+        <line x1="32" y1="63" x2="68" y2="63" stroke="#B8860B" stroke-width=".5"/>
+        <text x="50" y="76" text-anchor="middle" font-size="6" fill="#0A0A14" font-weight="700" font-family="Inter, sans-serif"><%= p.name.length > 14 ? p.name.slice(0,13)+'…' : p.name %></text>
+        <text id="detailVialDose" x="50" y="89" text-anchor="middle" font-size="7" fill="#B8860B" font-weight="800" font-family="Inter, sans-serif"><%= defaultSize ? defaultSize.label : '' %></text>
+      </svg>
+    <% } %>
+    <% if (discountPct > 0) { %><span class="badge badge-discount big">-<%= discountPct %>%</span><% } %>
+  </div>
+  <div class="product-detail-body">
+    <% if (p.category_name) { %><span class="product-cat"><%= p.category_name %></span><% } %>
+    <h1><%= p.name %></h1>
+    <p class="product-short"><%= p.short_description %></p>
+
+    <% if (sizesArr) { %>
+      <div class="size-selector" role="radiogroup" aria-label="<%= t('detail.size') %>">
+        <span class="size-selector-label"><%= t('detail.size') %></span>
+        <div class="size-chips">
+          <% sizesArr.forEach((sz, i) => { %>
+            <button type="button" class="size-chip <%= i === 0 ? 'active' : '' %>"
+              data-size="<%= sz.label %>" data-price="<%= sz.price %>" data-stock="<%= sz.stock %>"
+              role="radio" aria-checked="<%= i === 0 ? 'true' : 'false' %>"
+              <%= sz.stock <= 0 ? 'disabled' : '' %>>
+              <span class="chip-label"><%= sz.label %></span>
+              <span class="chip-price"><%= fmt(applyDiscount(sz.price)) %></span>
+              <% if (sz.stock <= 0) { %><span class="chip-soldout"><%= t('card.soldOut') %></span><% } %>
+            </button>
+          <% }) %>
+        </div>
+      </div>
+    <% } %>
+
+    <div class="product-detail-prices">
+      <% if (discountPct > 0) { %>
+        <span class="price-old big" id="priceOld"><%= fmt(startPrice) %></span>
+        <span class="price-new big" id="priceNew"><%= fmt(applyDiscount(startPrice)) %></span>
+        <span class="save-badge" id="saveBadge"><%= t('detail.save', { amount: fmt(startPrice - applyDiscount(startPrice)) }) %></span>
+      <% } else { %>
+        <span class="price-new big" id="priceNew"><%= fmt(startPrice) %></span>
+      <% } %>
+      <span class="price-unit"><%= t('detail.unit') %></span>
+    </div>
+
+    <ul class="specs">
+      <% if (p.presentation) { %><li><strong><%= t('detail.presentation') %>:</strong> <%= p.presentation %></li><% } %>
+      <% if (p.purity) { %><li><strong><%= t('detail.purity') %>:</strong> <%= p.purity %></li><% } %>
+      <li><strong><%= t('detail.availability') %>:</strong>
+        <span id="stockIndicator" class="<%= startStock > 0 ? 'in-stock' : 'out-stock' %>">
+          <%= startStock > 0 ? t('detail.inStock', { n: startStock }) : t('detail.outStock') %>
+        </span>
+      </li>
+    </ul>
+
+    <form method="post" action="/carrito/agregar" class="add-to-cart-form" id="addForm">
+      <input type="hidden" name="product_id" value="<%= p.id %>" />
+      <input type="hidden" name="redirect" value="/producto/<%= p.slug %>" />
+      <% if (sizesArr) { %>
+        <input type="hidden" name="size" id="sizeField" value="<%= defaultSize.label %>" />
+      <% } %>
+      <label><%= t('detail.qty') %>
+        <input type="number" name="quantity" id="qtyField" value="1" min="1" max="<%= startStock %>" />
+      </label>
+      <button type="submit" class="btn btn-primary btn-lg" id="addBtn" <%= startStock <= 0 ? 'disabled' : '' %>>
+        <%= startStock <= 0 ? t('detail.outStock') : t('detail.addCart') %>
+      </button>
+    </form>
+
+    <div class="product-description">
+      <h3><%= t('detail.description') %></h3>
+      <% buildDescription(p.short_description, sizesArr).split('\n').forEach(line => { %>
+        <% if (line.trim()) { %><p><%= line %></p><% } %>
+      <% }) %>
+    </div>
+  </div>
+</div>
+
+<% if (sizesArr) { %>
+<script>
+(function () {
+  const chips = document.querySelectorAll('.size-chip');
+  const sizeField = document.getElementById('sizeField');
+  const qtyField = document.getElementById('qtyField');
+  const addBtn = document.getElementById('addBtn');
+  const priceNew = document.getElementById('priceNew');
+  const priceOld = document.getElementById('priceOld');
+  const saveBadge = document.getElementById('saveBadge');
+  const stockIndicator = document.getElementById('stockIndicator');
+  const detailDose = document.getElementById('detailVialDose');
+  const discountPct = <%= discountPct %>;
+  const lang = <%- JSON.stringify(lang) %>;
+  const sym = <%- JSON.stringify(settings.currency_symbol || '$') %>;
+  const labels = {
+    addToCart: <%- JSON.stringify(t('detail.addCart')) %>,
+    soldOut: <%- JSON.stringify(t('detail.outStock')) %>,
+    inStock: <%- JSON.stringify(t('detail.inStock', { n: '__N__' })) %>,
+    save: <%- JSON.stringify(t('detail.save', { amount: '__AMT__' })) %>
+  };
+  function fmt(n) { return sym + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function applyDisc(price) { return Math.round(price * (1 - discountPct / 100) * 100) / 100; }
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (chip.disabled) return;
+      chips.forEach(c => { c.classList.remove('active'); c.setAttribute('aria-checked','false'); });
+      chip.classList.add('active');
+      chip.setAttribute('aria-checked','true');
+      const price = parseFloat(chip.dataset.price);
+      const stock = parseInt(chip.dataset.stock, 10);
+      const label = chip.dataset.size;
+      sizeField.value = label;
+      qtyField.max = stock;
+      if (parseInt(qtyField.value, 10) > stock) qtyField.value = stock;
+      if (detailDose) detailDose.textContent = label;
+      const disc = applyDisc(price);
+      priceNew.textContent = fmt(disc);
+      if (priceOld) priceOld.textContent = fmt(price);
+      if (saveBadge) saveBadge.textContent = labels.save.replace('__AMT__', fmt(price - disc));
+      if (stock > 0) {
+        stockIndicator.className = 'in-stock';
+        stockIndicator.textContent = labels.inStock.replace('__N__', stock);
+        addBtn.disabled = false;
+        addBtn.textContent = labels.addToCart;
+      } else {
+        stockIndicator.className = 'out-stock';
+        stockIndicator.textContent = labels.soldOut;
+        addBtn.disabled = true;
+        addBtn.textContent = labels.soldOut;
+      }
+    });
+  });
+})();
+</script>
+<% } %>
+
+<% if (related.length) { %>
+  <section class="section">
+    <h2><%= t('detail.related') %></h2>
+    <div class="product-grid">
+      <% related.forEach(p => { %>
+        <%- include('partials/product_card', { p }) %>
+      <% }) %>
+    </div>
+  </section>
+<% } %>
+
+<%- include('partials/footer') %>

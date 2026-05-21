@@ -1,0 +1,39 @@
+<%- include('_layout_head') %>
+
+<div class="admin-head">
+  <h1>Dashboard</h1>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card"><div class="stat-label">Productos</div><div class="stat-value"><%= stats.products %></div></div>
+  <div class="stat-card"><div class="stat-label">Activos</div><div class="stat-value"><%= stats.activeProducts %></div></div>
+  <div class="stat-card"><div class="stat-label">Categorías</div><div class="stat-value"><%= stats.categories %></div></div>
+  <div class="stat-card"><div class="stat-label">Pedidos</div><div class="stat-value"><%= stats.orders %></div></div>
+  <div class="stat-card"><div class="stat-label">Pendientes</div><div class="stat-value"><%= stats.pending %></div></div>
+  <div class="stat-card"><div class="stat-label">Ingresos totales</div><div class="stat-value"><%= fmt(stats.revenue) %></div></div>
+  <div class="stat-card"><div class="stat-label">Stock bajo (≤5)</div><div class="stat-value"><%= stats.lowStock %></div></div>
+  <div class="stat-card"><div class="stat-label">Agotados</div><div class="stat-value"><%= stats.outOfStock %></div></div>
+</div>
+
+<h2>Pedidos recientes</h2>
+<% if (!recent.length) { %>
+  <p class="empty">Aún no hay pedidos.</p>
+<% } else { %>
+  <table class="admin-table">
+    <thead><tr><th>#</th><th>Cliente</th><th>Total</th><th>Estado</th><th>Fecha</th><th></th></tr></thead>
+    <tbody>
+      <% recent.forEach(o => { %>
+        <tr>
+          <td>#<%= o.id %></td>
+          <td><%= o.customer_name %></td>
+          <td><%= fmt(o.total) %></td>
+          <td><span class="status-pill status-<%= o.status %>"><%= o.status %></span></td>
+          <td><%= new Date(o.created_at).toLocaleString('es-MX') %></td>
+          <td><a href="/admin/pedidos/<%= o.id %>" class="btn btn-small btn-ghost">Ver</a></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>
+
+<%- include('_layout_foot') %>

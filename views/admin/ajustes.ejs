@@ -1,0 +1,143 @@
+<%- include('_layout_head') %>
+
+<div class="admin-head"><h1>Ajustes de la tienda</h1></div>
+
+<form method="post" action="/admin/ajustes" class="admin-form">
+  <h2 style="margin:0">Identidad</h2>
+  <div class="grid-2">
+    <label>Nombre de la tienda<input type="text" name="store_name" value="<%= all.store_name %>" /></label>
+    <label>Tagline / lema<input type="text" name="store_tagline" value="<%= all.store_tagline %>" /></label>
+  </div>
+  <div class="grid-2">
+    <label>Color principal<input type="color" name="primary_color" value="<%= all.primary_color %>" /></label>
+    <label>Tema por defecto
+      <select name="theme">
+        <option value="dark" <%= all.theme === 'dark' ? 'selected' : '' %>>Oscuro</option>
+        <option value="light" <%= all.theme === 'light' ? 'selected' : '' %>>Claro</option>
+      </select>
+    </label>
+  </div>
+
+  <h2 style="margin:0">Precios y descuento</h2>
+  <div class="grid-2">
+    <label>Moneda (código)<input type="text" name="currency" value="<%= all.currency %>" /></label>
+    <label>Símbolo<input type="text" name="currency_symbol" value="<%= all.currency_symbol %>" /></label>
+  </div>
+  <label>Descuento global (%) — se aplica automáticamente a todos los precios
+    <input type="number" step="0.1" name="discount_percent" value="<%= all.discount_percent %>" />
+  </label>
+
+  <h2 style="margin:0">Contacto</h2>
+  <div class="grid-2">
+    <label>Correo<input type="email" name="contact_email" value="<%= all.contact_email %>" /></label>
+    <label>Teléfono<input type="tel" name="contact_phone" value="<%= all.contact_phone %>" /></label>
+  </div>
+  <label>WhatsApp (sólo dígitos, ej. 525500000000)<input type="text" name="whatsapp" value="<%= all.whatsapp %>" /></label>
+
+  <h2 style="margin:0">Textos legales y envío</h2>
+  <label>Información de envío<textarea name="shipping_note" rows="2"><%= all.shipping_note %></textarea></label>
+  <label>Aviso legal (footer)<textarea name="legal_disclaimer" rows="3"><%= all.legal_disclaimer %></textarea></label>
+
+  <h2 style="margin:0">Métodos de pago</h2>
+  <p style="margin:0;color:var(--text-muted);font-size:.88rem">Activa solo los que tengas listos. El cliente los verá en la página de confirmación del pedido.</p>
+
+  <fieldset class="payment-fieldset">
+    <legend>Tarjeta — Mercado Pago</legend>
+    <div class="checkbox-row"><label><input type="checkbox" name="payment_mercadopago_enabled" value="1" <%= all.payment_mercadopago_enabled === '1' ? 'checked' : '' %>/> Activar Mercado Pago</label></div>
+    <label>Link de pago (créalo en tu panel de Mercado Pago → "Link de pago")
+      <input type="url" name="payment_mercadopago_link" value="<%= all.payment_mercadopago_link || '' %>" placeholder="https://mpago.la/..." />
+    </label>
+  </fieldset>
+
+  <fieldset class="payment-fieldset">
+    <legend>Tarjeta — Clip</legend>
+    <div class="checkbox-row"><label><input type="checkbox" name="payment_clip_enabled" value="1" <%= all.payment_clip_enabled === '1' ? 'checked' : '' %>/> Activar Clip</label></div>
+    <label>Link de pago Clip
+      <input type="url" name="payment_clip_link" value="<%= all.payment_clip_link || '' %>" placeholder="https://payclip.com/checkout/..." />
+    </label>
+  </fieldset>
+
+  <fieldset class="payment-fieldset">
+    <legend>Tarjeta → Cripto (NOWPayments)</legend>
+    <div class="checkbox-row"><label><input type="checkbox" name="payment_nowpayments_enabled" value="1" <%= all.payment_nowpayments_enabled === '1' ? 'checked' : '' %>/> Activar NOWPayments</label></div>
+    <label>Link de checkout NOWPayments (el cliente paga con tarjeta, tú recibes cripto en tu wallet)
+      <input type="url" name="payment_nowpayments_link" value="<%= all.payment_nowpayments_link || '' %>" placeholder="https://nowpayments.io/payment/..." />
+    </label>
+    <p style="margin:0;color:var(--text-muted);font-size:.82rem">Crea tu cuenta en nowpayments.io, vincula tu wallet (USDT/USDC/ETH) y genera un payment link. El portal se ve como Stripe — el cliente nunca sabe que es cripto del lado de quien recibe.</p>
+  </fieldset>
+
+  <fieldset class="payment-fieldset">
+    <legend>SPEI (transferencia interbancaria MX)</legend>
+    <div class="checkbox-row"><label><input type="checkbox" name="payment_spei_enabled" value="1" <%= all.payment_spei_enabled === '1' ? 'checked' : '' %>/> Activar SPEI</label></div>
+    <div class="grid-2">
+      <label>Banco<input type="text" name="payment_spei_bank" value="<%= all.payment_spei_bank || '' %>" placeholder="BBVA, Santander, Nu..." /></label>
+      <label>Titular de la cuenta<input type="text" name="payment_spei_holder" value="<%= all.payment_spei_holder || '' %>" /></label>
+    </div>
+    <label>CLABE (18 dígitos)<input type="text" name="payment_spei_clabe" value="<%= all.payment_spei_clabe || '' %>" maxlength="18" pattern="[0-9]{18}" placeholder="012180001234567890" /></label>
+  </fieldset>
+
+  <fieldset class="payment-fieldset">
+    <legend>OXXO (depósito en efectivo)</legend>
+    <div class="checkbox-row"><label><input type="checkbox" name="payment_oxxo_enabled" value="1" <%= all.payment_oxxo_enabled === '1' ? 'checked' : '' %>/> Activar OXXO (requiere SPEI configurado)</label></div>
+    <label>Nota para el cliente<textarea name="payment_oxxo_note" rows="2"><%= all.payment_oxxo_note || '' %></textarea></label>
+  </fieldset>
+
+  <fieldset class="payment-fieldset">
+    <legend>Zelle (USA)</legend>
+    <div class="checkbox-row"><label><input type="checkbox" name="payment_zelle_enabled" value="1" <%= all.payment_zelle_enabled === '1' ? 'checked' : '' %>/> Activar Zelle</label></div>
+    <div class="grid-2">
+      <label>Nombre del beneficiario<input type="text" name="payment_zelle_name" value="<%= all.payment_zelle_name || '' %>" /></label>
+      <label>Email o teléfono Zelle<input type="text" name="payment_zelle_email" value="<%= all.payment_zelle_email || '' %>" /></label>
+    </div>
+  </fieldset>
+
+  <fieldset class="payment-fieldset">
+    <legend>Wise (internacional)</legend>
+    <div class="checkbox-row"><label><input type="checkbox" name="payment_wise_enabled" value="1" <%= all.payment_wise_enabled === '1' ? 'checked' : '' %>/> Activar Wise</label></div>
+    <div class="grid-2">
+      <label>Wisetag (recomendado)<input type="text" name="payment_wise_wisetag" value="<%= all.payment_wise_wisetag || '' %>" placeholder="@usuario" /></label>
+      <label>Email Wise<input type="email" name="payment_wise_email" value="<%= all.payment_wise_email || '' %>" /></label>
+    </div>
+    <label>Notas / detalles adicionales<input type="text" name="payment_wise_note" value="<%= all.payment_wise_note || '' %>" placeholder="Receive in USD / EUR, etc." /></label>
+  </fieldset>
+
+  <fieldset class="payment-fieldset">
+    <legend>Cripto — EVM (Ethereum / BNB Chain / Polygon / Arbitrum / etc.)</legend>
+    <div class="checkbox-row"><label><input type="checkbox" name="payment_eth_enabled" value="1" <%= all.payment_eth_enabled === '1' ? 'checked' : '' %>/> Activar pagos EVM</label></div>
+    <label>Dirección de la wallet (0x...)
+      <input type="text" name="payment_eth_address" value="<%= all.payment_eth_address || '' %>" placeholder="0x..." />
+    </label>
+    <div class="grid-2">
+      <label>Red exacta (lo verá el cliente — sé específico)
+        <input type="text" name="payment_eth_network" value="<%= all.payment_eth_network || '' %>" placeholder="BNB Chain (BEP-20)" />
+      </label>
+      <label>Monedas aceptadas en esta red
+        <input type="text" name="payment_eth_currencies" value="<%= all.payment_eth_currencies || '' %>" placeholder="USDT (BEP-20), USDC (BEP-20), BNB" />
+      </label>
+    </div>
+    <p style="margin:0;color:var(--text-muted);font-size:.82rem">⚠️ La misma dirección 0x funciona en TODAS las redes EVM, pero los tokens NO son intercambiables entre redes. Especifica claramente qué red usas — el cliente verá una advertencia para no enviar desde otra red.</p>
+  </fieldset>
+
+  <fieldset class="payment-fieldset">
+    <legend>Cripto — Bitcoin</legend>
+    <div class="checkbox-row"><label><input type="checkbox" name="payment_btc_enabled" value="1" <%= all.payment_btc_enabled === '1' ? 'checked' : '' %>/> Activar pagos en Bitcoin</label></div>
+    <label>Dirección Bitcoin (bech32 / segwit)
+      <input type="text" name="payment_btc_address" value="<%= all.payment_btc_address || '' %>" placeholder="bc1..." />
+    </label>
+    <p style="margin:0;color:var(--text-muted);font-size:.82rem">QR con prefijo <code>bitcoin:</code> reconocido por Cash App, Strike, BlueWallet, Phoenix, Muun, etc.</p>
+  </fieldset>
+
+  <button type="submit" class="btn btn-primary">Guardar ajustes</button>
+</form>
+
+<form method="post" action="/admin/password" class="admin-form" style="margin-top:24px;">
+  <h2 style="margin:0">Cambiar contraseña</h2>
+  <label>Contraseña actual<input type="password" name="current" required /></label>
+  <div class="grid-2">
+    <label>Nueva contraseña<input type="password" name="next" required minlength="6" /></label>
+    <label>Confirmar nueva contraseña<input type="password" name="confirm" required minlength="6" /></label>
+  </div>
+  <button type="submit" class="btn btn-primary">Actualizar contraseña</button>
+</form>
+
+<%- include('_layout_foot') %>

@@ -1,0 +1,50 @@
+<% const title = t('checkout.title') %>
+<%- include('partials/header', { title }) %>
+
+<h1><%= t('checkout.title') %></h1>
+
+<% if (errors && errors.length) { %>
+  <div class="flash flash-error">
+    <strong><%= t('checkout.errors') %></strong>
+    <ul style="margin:4px 0 0 18px;"><% errors.forEach(e => { %><li><%= e %></li><% }) %></ul>
+  </div>
+<% } %>
+
+<form method="post" action="/checkout" class="checkout-grid">
+  <div class="checkout-form">
+    <h2><%= t('checkout.customer') %></h2>
+    <label><%= t('checkout.name') %> *<input type="text" name="name" value="<%= (form && form.name) || '' %>" required /></label>
+    <label><%= t('checkout.email') %> *<input type="email" name="email" value="<%= (form && form.email) || '' %>" required /></label>
+    <label><%= t('checkout.phone') %><input type="tel" name="phone" value="<%= (form && form.phone) || '' %>" /></label>
+
+    <h2><%= t('checkout.shipping') %></h2>
+    <label><%= t('checkout.address') %><input type="text" name="address" value="<%= (form && form.address) || '' %>" /></label>
+    <div class="form-row">
+      <label><%= t('checkout.city') %><input type="text" name="city" value="<%= (form && form.city) || '' %>" /></label>
+      <label><%= t('checkout.state') %><input type="text" name="state" value="<%= (form && form.state) || '' %>" /></label>
+      <label><%= t('checkout.zip') %><input type="text" name="zip" value="<%= (form && form.zip) || '' %>" /></label>
+    </div>
+    <label><%= t('checkout.notes') %><textarea name="notes" rows="3"><%= (form && form.notes) || '' %></textarea></label>
+
+    <button type="submit" class="btn btn-primary btn-lg"><%= t('checkout.confirm') %></button>
+    <p class="note"><%= t('checkout.note') %></p>
+  </div>
+
+  <aside class="checkout-summary">
+    <h3><%= t('checkout.summary') %></h3>
+    <ul class="checkout-items">
+      <% items.forEach(i => { %>
+        <li>
+          <span><%= i.displayName || i.name %> × <%= i.quantity %></span>
+          <strong><%= fmt(i.lineTotal) %></strong>
+        </li>
+      <% }) %>
+    </ul>
+    <% if (discountPct > 0) { %>
+      <div class="summary-row"><span><%= t('checkout.discount') %></span><strong><%= discountPct %>%</strong></div>
+    <% } %>
+    <div class="summary-row total"><span><%= t('checkout.total') %></span><span><%= fmt(total) %></span></div>
+  </aside>
+</form>
+
+<%- include('partials/footer') %>

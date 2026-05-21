@@ -1,0 +1,26 @@
+<%- include('_layout_head') %>
+
+<div class="admin-head"><h1>Pedidos (<%= orders.length %>)</h1></div>
+
+<% if (!orders.length) { %>
+  <p class="empty">Aún no hay pedidos.</p>
+<% } else { %>
+  <table class="admin-table">
+    <thead><tr><th>#</th><th>Cliente</th><th>Correo</th><th>Total</th><th>Estado</th><th>Fecha</th><th></th></tr></thead>
+    <tbody>
+      <% orders.forEach(o => { %>
+        <tr>
+          <td>#<%= o.id %></td>
+          <td><%= o.customer_name %></td>
+          <td><%= o.customer_email %></td>
+          <td><strong><%= fmt(o.total) %></strong></td>
+          <td><span class="status-pill status-<%= o.status %>"><%= o.status %></span></td>
+          <td><%= new Date(o.created_at).toLocaleString('es-MX') %></td>
+          <td><a href="/admin/pedidos/<%= o.id %>" class="btn btn-small btn-ghost">Ver</a></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>
+
+<%- include('_layout_foot') %>

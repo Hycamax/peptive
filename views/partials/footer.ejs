@@ -1,0 +1,36 @@
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <h4><%= settings.store_name %></h4>
+        <p><%= settings.store_tagline %></p>
+      </div>
+      <div>
+        <h4><%= t('footer.contact') %></h4>
+        <p>📧 <%= settings.contact_email %></p>
+        <p>📞 <%= settings.contact_phone %></p>
+        <% if (settings.whatsapp) { %>
+          <p><a href="https://wa.me/<%= settings.whatsapp %>" target="_blank">WhatsApp</a></p>
+        <% } %>
+      </div>
+      <div>
+        <h4><%= t('footer.shipping') %></h4>
+        <p><%= settings.shipping_note %></p>
+      </div>
+      <div>
+        <h4><%= t('footer.categories') %></h4>
+        <% categories.slice(0, 6).forEach(c => { %>
+          <p><a href="/productos?categoria=<%= c.slug %>"><%= c.name %></a></p>
+        <% }) %>
+      </div>
+    </div>
+    <div class="container disclaimer">
+      <small><%= settings.legal_disclaimer %></small>
+      <small><%= t('footer.copyright', { year: new Date().getFullYear(), brand: settings.store_name }) %> · <a href="/admin/login"><%= t('footer.admin') %></a></small>
+    </div>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

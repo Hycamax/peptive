@@ -1,0 +1,11 @@
+<% const title = t('500.title') %>
+<%- include('partials/header', { title }) %>
+<div class="ok-box">
+  <h1><%= t('500.title') %></h1>
+  <p><%= t('500.body') %></p>
+  <% if (typeof message !== 'undefined' && message) { %>
+    <pre style="background:var(--bg-elev);padding:12px;border-radius:8px;text-align:left;max-width:600px;margin:12px auto;overflow:auto;font-size:.85rem;color:var(--text-muted)"><%= message %></pre>
+  <% } %>
+  <a href="/" class="btn btn-primary"><%= t('404.cta') %></a>
+</div>
+<%- include('partials/footer') %>

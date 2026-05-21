@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="<%= settings.theme || 'dark' %>">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin · <%= settings.store_name %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  <style>:root { --primary: <%= settings.primary_color || '#B8860B' %>; }</style>
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">◇ <%= settings.store_name %></div>
+    <nav class="admin-nav">
+      <a href="/admin" class="<%= currentPath === '/admin' ? 'active' : '' %>">Dashboard</a>
+      <a href="/admin/productos" class="<%= currentPath.startsWith('/admin/productos') ? 'active' : '' %>">Productos</a>
+      <a href="/admin/categorias" class="<%= currentPath.startsWith('/admin/categorias') ? 'active' : '' %>">Categorías</a>
+      <a href="/admin/pedidos" class="<%= currentPath.startsWith('/admin/pedidos') ? 'active' : '' %>">Pedidos</a>
+      <a href="/admin/ajustes" class="<%= currentPath.startsWith('/admin/ajustes') ? 'active' : '' %>">Ajustes</a>
+      <a href="/" target="_blank">Ver tienda ↗</a>
+    </nav>
+    <form method="post" action="/admin/logout" class="admin-logout">
+      <button type="submit">Cerrar sesión</button>
+    </form>
+  </aside>
+  <main class="admin-main">
+    <% if (flash) { %><div class="flash flash-<%= flash.type %>"><%= flash.message %></div><% } %>
