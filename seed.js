@@ -1,5 +1,13 @@
 const { db, setSetting } = require('./db');
 const bcrypt = require('bcryptjs');
+const fs = require('fs');
+const path = require('path');
+
+const UPLOADS_DIR = path.join(__dirname, 'public', 'uploads');
+const imageForSlug = (slug) => {
+  const rel = `/uploads/${slug}.png`;
+  return fs.existsSync(path.join(UPLOADS_DIR, `${slug}.png`)) ? rel : '';
+};
 
 // Set PEPTIVE brand settings
 setSetting('store_name', 'PEPTIVE');
@@ -145,19 +153,24 @@ const products = [
 ];
 
 const insertProduct = db.prepare(`
-  INSERT OR IGNORE INTO products (name, name_en, slug, category_id, short_description, short_description_en, presentation, purity, price, stock, sizes, featured, active)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+  INSERT OR IGNORE INTO products (name, name_en, slug, category_id, short_description, short_description_en, presentation, purity, price, stock, image, sizes, featured, active)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+`);
+const backfillImage = db.prepare(`
+  UPDATE products SET image = ? WHERE slug = ? AND (image IS NULL OR image = '')
 `);
 
 for (const p of products) {
   const catId = catMap[p.cat] || null;
   const totalStock = p.sizes.reduce((s, sz) => s + sz.stock, 0);
   const basePrice = p.sizes[0].price;
+  const img = imageForSlug(p.slug);
   insertProduct.run(
     p.name, p.name_en, p.slug, catId, p.short, p.short_en,
     p.presentation, p.purity, basePrice, totalStock,
-    JSON.stringify(p.sizes), p.featured
+    img, JSON.stringify(p.sizes), p.featured
   );
+  if (img) backfillImage.run(img, p.slug);
 }
 
 console.log(`Seeded ${products.length} products across ${categories.length} categories.`);
