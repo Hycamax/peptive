@@ -53,6 +53,13 @@
     <% if (discountPct > 0) { %>
       <div class="promo-bar"><%- t('promo.discount', { pct: discountPct }) %></div>
     <% } %>
+    <nav class="cat-bar" aria-label="<%= t('nav.categories') %>">
+      <a href="/" class="cat-chip <%= currentPath === '/' ? 'active' : '' %>"><%= t('nav.home') %></a>
+      <a href="/products" class="cat-chip <%= (currentPath.startsWith('/products') || currentPath.startsWith('/product')) ? 'active' : '' %>"><%= t('nav.products') %></a>
+      <% categories.forEach(c => { %>
+        <a href="/products?category=<%= c.slug %>" class="cat-chip"><%= c.name %></a>
+      <% }) %>
+    </nav>
   </header>
 
   <% if (flash) { %>
