@@ -43,6 +43,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const IS_PROD = process.env.NODE_ENV === 'production';
 
+// Behind Render's HTTPS proxy, trust X-Forwarded-Proto so req.secure is true and
+// express-session will actually set the Secure session cookie (otherwise the
+// session resets on every request and the cart never persists).
+if (IS_PROD) app.set('trust proxy', 1);
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
