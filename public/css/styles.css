@@ -208,6 +208,20 @@ h3 { font-weight: 600; }
 .hero-peptive .hero-actions { justify-content: center; margin-top: 30px; }
 .hero-peptive .hero-features { justify-content: center; margin-top: 30px; }
 
+/* Brand wordmark logo (DNA-"I") in the header — cropped to trim the asset's margins */
+.brand-logo-wordmark { width: 164px; height: 40px; object-fit: cover; object-position: center 45%; display: block; }
+[data-theme="dark"] .brand-logo-wordmark { background: #FAF7F2; border-radius: 8px; padding: 3px 8px; }
+
+/* Hero: DNA-"I" wordmark as the focal logo, on a cream field with a gold molecule
+   constellation behind it. The constellation is masked transparent in the centre so
+   the logo's cream backplate blends seamlessly (matches homepage-mockup-light). */
+.hero-peptive { background: radial-gradient(65% 75% at 50% 0%, color-mix(in oklab, var(--gold) 12%, transparent), transparent 70%), var(--bg); }
+.hero-peptive::before { content: none; }
+.hero-peptive .hero-title { margin: 0; }
+.hero-logo { display: block; width: min(640px, 88%); height: auto; margin: 0 auto; }
+[data-theme="dark"] .hero-logo { background: #FAF7F2; border-radius: 14px; padding: 12px 22px; }
+.hero-molecules { position: absolute; inset: 0; z-index: -1; pointer-events: none; background: url('/static/img/molecule-bg.svg') center top / cover no-repeat; opacity: .9; -webkit-mask-image: radial-gradient(120% 95% at 50% 30%, transparent 22%, #000 58%); mask-image: radial-gradient(120% 95% at 50% 30%, transparent 22%, #000 58%); }
+
 /* ========================================================================
    Buttons
    ======================================================================== */
@@ -535,6 +549,7 @@ h3 { font-weight: 600; }
   .price-new.big { font-size: 1.8rem; }
   .verify-badge { display: none; }
   .brand-name { display: none; }
+  .brand-logo-wordmark { width: 132px; height: 34px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }

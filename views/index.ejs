@@ -4,11 +4,8 @@
 <section class="hero hero-peptive">
   <div class="hero-molecules" aria-hidden="true"></div>
   <div class="hero-content">
+    <h1 class="hero-title"><img class="hero-logo" src="/static/img/peptive-wordmark-trans.png" alt="PEPTIVE — <%= settings.store_tagline %>" /></h1>
     <span class="hero-eyebrow"><%= t('hero.eyebrow') %></span>
-    <h1 class="hero-title">
-      <span class="hero-wordmark">PEPTIVE</span>
-    </h1>
-    <p class="hero-tagline"><%= settings.store_tagline %></p>
     <% if (discountPct > 0) { %>
       <p class="hero-promo"><%= t('hero.promo', { pct: discountPct }) %></p>
     <% } %>
