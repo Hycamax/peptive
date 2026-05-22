@@ -36,8 +36,14 @@ const CATS = [
   ['Accesorios','Accessories','Soluciones para reconstitución de péptidos liofilizados.','Solutions for reconstituting lyophilized peptides.',9]
 ];
 const insCat = db.prepare('INSERT OR IGNORE INTO categories (name, slug, description, sort_order, name_en, description_en) VALUES (?, ?, ?, ?, ?, ?)');
-const upCat  = db.prepare('UPDATE categories SET description=?, name_en=?, description_en=?, sort_order=? WHERE name=?');
-for (const [es, en, dEs, dEn, ord] of CATS) { insCat.run(es, slug(es), dEs, ord, en, dEn); upCat.run(dEs, en, dEn, ord, es); }
+// Key on slug, not name: a prior seed may have created the same slug under a
+// different name. Insert if the slug is new, otherwise correct the row in place.
+const upCat  = db.prepare('UPDATE categories SET name=?, description=?, sort_order=?, name_en=?, description_en=? WHERE slug=?');
+for (const [es, en, dEs, dEn, ord] of CATS) {
+  const s = slug(es);
+  insCat.run(es, s, dEs, ord, en, dEn);
+  try { upCat.run(es, dEs, ord, en, dEn, s); } catch (_) {} // name is UNIQUE; ignore rare collisions, slug lookup still resolves
+}
 
 // Spanish-language ES settings (idempotent — don't clobber live values)
 const insSet = db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)');
@@ -191,7 +197,11 @@ const P = [
     [['ADW3','3ml',20,25],['ADW10','10ml',22,20]],0]
 ];
 
-const catId = name => db.prepare('SELECT id FROM categories WHERE name = ?').get(name).id;
+const catId = name => {
+  const row = db.prepare('SELECT id FROM categories WHERE slug = ?').get(slug(name));
+  if (!row) throw new Error(`Category not found for "${name}" (slug ${slug(name)})`);
+  return row.id;
+};
 
 db.exec('DELETE FROM products');
 db.exec("DELETE FROM sqlite_sequence WHERE name = 'products'");
