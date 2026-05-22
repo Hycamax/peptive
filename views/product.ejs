@@ -18,7 +18,7 @@
 <div class="product-detail">
   <div class="product-detail-image">
     <% if (p.image) { %>
-      <img src="<%= p.image %>" alt="<%= p.name %>" />
+      <img id="detailMainImg" src="<%= (defaultSize && defaultSize.img) ? defaultSize.img : p.image %>" alt="<%= p.name %>" />
     <% } else { %>
       <svg class="vial-icon big branded" id="detailVial" viewBox="0 0 100 140" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <defs>
@@ -58,7 +58,7 @@
         <div class="size-chips">
           <% sizesArr.forEach((sz, i) => { %>
             <button type="button" class="size-chip <%= i === 0 ? 'active' : '' %>"
-              data-size="<%= sz.label %>" data-price="<%= sz.price %>" data-stock="<%= sz.stock %>"
+              data-size="<%= sz.label %>" data-price="<%= sz.price %>" data-stock="<%= sz.stock %>" data-img="<%= sz.img || '' %>"
               role="radio" aria-checked="<%= i === 0 ? 'true' : 'false' %>"
               <%= sz.stock <= 0 ? 'disabled' : '' %>>
               <span class="chip-label"><%= sz.label %></span>
@@ -126,6 +126,7 @@
   const saveBadge = document.getElementById('saveBadge');
   const stockIndicator = document.getElementById('stockIndicator');
   const detailDose = document.getElementById('detailVialDose');
+  const detailMainImg = document.getElementById('detailMainImg');
   const discountPct = <%= discountPct %>;
   const lang = <%- JSON.stringify(lang) %>;
   const sym = <%- JSON.stringify(settings.currency_symbol || '$') %>;
@@ -150,6 +151,7 @@
       qtyField.max = stock;
       if (parseInt(qtyField.value, 10) > stock) qtyField.value = stock;
       if (detailDose) detailDose.textContent = label;
+      if (detailMainImg && chip.dataset.img) detailMainImg.src = chip.dataset.img;
       const disc = applyDisc(price);
       priceNew.textContent = fmt(disc);
       if (priceOld) priceOld.textContent = fmt(price);
