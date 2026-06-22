@@ -6,6 +6,29 @@
 
 ---
 
+## 🔒 Permanent product links (printed QR labels) — DO NOT BREAK
+
+Physical vial labels carry a **QR code that points to `https://peptivelab.com/product/<slug>`**.
+Those labels are already printed and installed on vials in the field, so **a product's slug must
+never change** — if it changes, every printed QR for that product 404s.
+
+Guarantees built into the code (keep them):
+
+- **Admin edits never change a slug.** `POST /admin/products/guardar` sets the slug only when a
+  product is *created*; editing the name/price/etc. leaves the slug untouched (`server.js`).
+- **Catalog rebuilds preserve slugs.** `rebuild_catalog.js` snapshots each vial **code → slug**
+  before wiping and reuses it, so `node rebuild_catalog.js --force` keeps existing URLs even if a
+  display name changes. New products get a fresh slug.
+- **Bonus permalink:** `GET /p/<CODE>` resolves a product by its immutable vial code (e.g.
+  `/p/ADW10`) — even more change-proof than the slug. Optional; the slug URL is the canonical one.
+
+**RULES for anyone editing the catalog:**
+1. Never rename a `slug` or change a vial `code` once a label is printed.
+2. To rebrand a product's display name, change `name`/`name_en` — the slug stays frozen on purpose.
+3. New product → its slug/code is now permanent the moment its label is printed.
+
+---
+
 ## Quick Start
 
 ```bash

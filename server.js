@@ -206,7 +206,16 @@ app.get('/products', (req, res) => {
   `;
   const params = [];
   if (categoria) { sql += ' AND c.slug = ?'; params.push(categoria); }
-  if (q) { sql += ' AND (p.name LIKE ? OR p.short_description LIKE ?)'; params.push(`%${q}%`, `%${q}%`); }
+  if (q) {
+    // Match each whitespace-separated term against the ES + EN name/description AND the size
+    // labels/codes (sizes JSON). Terms are AND-ed, columns OR-ed — so "acetic acid", "ácido
+    // acético", "10ml", or even "acetic acid 10ml" (term spans the name + a size) all find it.
+    for (const term of String(q).trim().split(/\s+/).filter(Boolean).slice(0, 6)) {
+      sql += ' AND (p.name LIKE ? OR p.short_description LIKE ? OR p.name_en LIKE ? OR p.short_description_en LIKE ? OR p.sizes LIKE ?)';
+      const like = `%${term}%`;
+      params.push(like, like, like, like, like);
+    }
+  }
   switch (orden) {
     case 'price_asc': case 'precio_asc': sql += ' ORDER BY p.price ASC'; break;
     case 'price_desc': case 'precio_desc': sql += ' ORDER BY p.price DESC'; break;
@@ -232,6 +241,30 @@ app.get('/product/:slug', (req, res) => {
   `).all(p.category_id, p.id);
   for (const r of related) { r.sizesArr = parseSizes(r); localizeProduct(r, res.locals.lang); }
   res.render('product', { p, related });
+});
+
+// ── PERMANENT per-vial link (for QR labels) ──────────────────────────────────────────────────
+// Resolves a product by its immutable vial CODE / SKU (e.g. ADW10), looked up inside the sizes
+// JSON. This URL — /p/<CODE> — is the ONE link that goes on printed labels: it depends only on the
+// code, never on the product name, slug, or row id, so the QR keeps working after a rename, a slug
+// change, or a full `rebuild_catalog.js --force` (which resets ids). Case-insensitive.
+// PERMANENT RULE: once a code is on a printed label, never change or reuse it. See README.
+app.get('/p/:code', (req, res) => {
+  const code = String(req.params.code || '').replace(/[^a-zA-Z0-9]/g, '');
+  if (!code) return res.status(404).render('404');
+  const p = db.prepare(`
+    SELECT p.*, c.name AS category_name, c.slug AS category_slug
+    FROM products p LEFT JOIN categories c ON c.id = p.category_id
+    WHERE p.active = 1 AND p.sizes LIKE ?
+  `).get(`%"code":"${code}"%`);            // SQLite LIKE is case-insensitive by default
+  if (!p) return res.status(404).render('404');
+  p.sizesArr = parseSizes(p);
+  localizeProduct(p, res.locals.lang);
+  const related = db.prepare(
+    'SELECT * FROM products WHERE category_id = ? AND id != ? AND active = 1 LIMIT 4'
+  ).all(p.category_id, p.id);
+  for (const r of related) { r.sizesArr = parseSizes(r); localizeProduct(r, res.locals.lang); }
+  res.render('product', { p, related, selectedCode: code });
 });
 
 app.get('/category/:slug', (req, res) => {
@@ -453,7 +486,6 @@ app.post('/admin/products/guardar', requireAdmin, upload.single('image'), (req, 
     req.session.flash = { type: 'error', message: 'El nombre es requerido' };
     return res.redirect(b.id ? `/admin/products/${b.id}/editar` : '/admin/products/nuevo');
   }
-  const slugVal = b.slug ? slug(b.slug) : slug(name);
   const featured = b.featured ? 1 : 0;
   const active = b.active ? 1 : 0;
   const categoryId = b.category_id ? parseInt(b.category_id, 10) : null;
@@ -461,15 +493,19 @@ app.post('/admin/products/guardar', requireAdmin, upload.single('image'), (req, 
   if (req.file) image = `/uploads/${req.file.filename}`;
   try {
     if (b.id) {
+      // PERMANENT LINKS: never regenerate the slug on edit. The /product/<slug> URL — and any QR or
+      // shared link pointing at it — must stay stable even when the name changes, so the slug is set
+      // once at creation and left untouched here. See README "Permanent product links".
       db.prepare(`
-        UPDATE products SET name=?, slug=?, category_id=?, short_description=?, description=?,
+        UPDATE products SET name=?, category_id=?, short_description=?, description=?,
           presentation=?, purity=?, price=?, stock=?, image=?, featured=?, active=?, updated_at=CURRENT_TIMESTAMP
         WHERE id=?
-      `).run(name, slugVal, categoryId, b.short_description || '', b.description || '',
+      `).run(name, categoryId, b.short_description || '', b.description || '',
         b.presentation || '', b.purity || '', parseFloat(b.price) || 0, parseInt(b.stock, 10) || 0,
         image, featured, active, b.id);
       req.session.flash = { type: 'success', message: 'Producto actualizado' };
     } else {
+      const slugVal = b.slug ? slug(b.slug) : slug(name);
       db.prepare(`
         INSERT INTO products (name, slug, category_id, short_description, description, presentation, purity, price, stock, image, featured, active)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)

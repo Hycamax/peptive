@@ -16,6 +16,12 @@ try { db.exec("ALTER TABLE categories ADD COLUMN name_en TEXT NOT NULL DEFAULT '
 try { db.exec("ALTER TABLE categories ADD COLUMN description_en TEXT NOT NULL DEFAULT ''"); } catch (_) {}
 try { db.exec("ALTER TABLE order_items ADD COLUMN size TEXT NOT NULL DEFAULT ''"); } catch (_) {}
 
+// One-time clean permalink (idempotent): rename the acetic-acid product's auto-slug
+// 'acido-acetico-agua' to the cleaner permanent 'acetic-acid'. Runs on every deploy and no-ops once
+// applied. Done BEFORE its QR label is printed, so no installed label is affected. After this, the
+// slug is frozen like every other (see the slug-preservation snapshot below).
+try { db.exec("UPDATE products SET slug='acetic-acid' WHERE slug='acido-acetico-agua'"); } catch (_) {}
+
 // Admin (only if missing)
 if (!db.prepare('SELECT id FROM admins WHERE username = ?').get('admin')) {
   db.prepare('INSERT INTO admins (username, password_hash) VALUES (?, ?)').run('admin', bcrypt.hashSync('admin123', 10));
@@ -194,7 +200,7 @@ const P = [
   ['Accesorios','Agua bacteriostática','Bacteriostatic Water','Solución estéril con 0.9% alcohol bencílico para reconstitución.','Sterile 0.9% benzyl-alcohol solution for reconstitution.',
     [['WA3','3ml',15,40],['WA10','10ml',10,40]],0],
   ['Accesorios','Ácido acético (agua)','Acetic Acid Water','Solución estéril de ácido acético 0.6% para péptidos sensibles a pH.','Sterile 0.6% acetic-acid solution for pH-sensitive peptides.',
-    [['ADW3','3ml',20,25],['ADW10','10ml',22,20]],0]
+    [['ADW3','3ml',20,25],['ADW10','10ml',22,20]],0,'acetic-acid']   // explicit clean slug (see migration above) — keeps it on a fresh DB too
 ];
 
 const catId = name => {
@@ -202,6 +208,19 @@ const catId = name => {
   if (!row) throw new Error(`Category not found for "${name}" (slug ${slug(name)})`);
   return row.id;
 };
+
+// PERMANENT LINKS: snapshot every existing vial CODE -> its product slug BEFORE wiping, so the
+// rebuild REUSES the slug each printed QR already points to (/product/<slug>) instead of
+// regenerating it from a possibly-changed name. Protects every already-installed vial label.
+const codeToSlug = {};
+try {
+  for (const row of db.prepare('SELECT slug, sizes FROM products').all()) {
+    let szs = []; try { szs = JSON.parse(row.sizes || '[]'); } catch (_) {}
+    for (const s of (Array.isArray(szs) ? szs : [])) {
+      if (s && s.code) codeToSlug[String(s.code).toUpperCase()] = row.slug;
+    }
+  }
+} catch (_) {}
 
 db.exec('DELETE FROM products');
 db.exec("DELETE FROM sqlite_sequence WHERE name = 'products'");
@@ -214,7 +233,7 @@ const ins = db.prepare(`
 
 db.exec('BEGIN');
 let nProducts = 0, nImages = 0;
-for (const [cat, nameEs, nameEn, shortEs, shortEn, rawSizes, featured] of P) {
+for (const [cat, nameEs, nameEn, shortEs, shortEn, rawSizes, featured, slugOverride] of P) {
   const sizes = rawSizes.map(([code, label, price, stock]) => {
     nImages++;
     return { label, price, stock, code, img: img(code) };
@@ -224,7 +243,12 @@ for (const [cat, nameEs, nameEn, shortEs, shortEn, rawSizes, featured] of P) {
   const presentation = sizes.length === 1
     ? `Vial ${sizes[0].label} · 10 viales / kit`
     : `${sizes.length} presentaciones · 10 viales / kit`;
-  ins.run(nameEs, nameEn, slug(nameEs), catId(cat), shortEs, shortEn,
+  // Reuse the existing slug if any of this product's codes already had one (keeps printed QR links
+  // stable across rebuilds); only mint a fresh slug for genuinely new products.
+  let prodSlug = null;
+  for (const s of sizes) { const k = String(s.code).toUpperCase(); if (codeToSlug[k]) { prodSlug = codeToSlug[k]; break; } }
+  if (!prodSlug) prodSlug = slugOverride || slug(nameEs);
+  ins.run(nameEs, nameEn, prodSlug, catId(cat), shortEs, shortEn,
     presentation, 'HPLC >99%', minPrice, totalStock,
     sizes[0].img, JSON.stringify(sizes), featured ? 1 : 0);
   nProducts++;
