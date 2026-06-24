@@ -5,6 +5,7 @@
 const slugify = require('slugify');
 const bcrypt = require('bcryptjs');
 const { db } = require('./db');
+const fs = require('fs'), path = require('path');
 const slug = s => slugify(s, { lower: true, strict: true, locale: 'es' });
 const FORCE = process.argv.includes('--force');
 
@@ -21,6 +22,14 @@ try { db.exec("ALTER TABLE order_items ADD COLUMN size TEXT NOT NULL DEFAULT ''"
 // applied. Done BEFORE its QR label is printed, so no installed label is affected. After this, the
 // slug is frozen like every other (see the slug-preservation snapshot below).
 try { db.exec("UPDATE products SET slug='acetic-acid' WHERE slug='acido-acetico-agua'"); } catch (_) {}
+
+// One-time backfill (idempotent): write the Lipo-C (LC216) blend formula into its description, but
+// ONLY while it still has the original generic text — so a later admin edit is never clobbered.
+try {
+  db.prepare("UPDATE products SET short_description = ?, short_description_en = ? WHERE sizes LIKE '%\"code\":\"LC216\"%' AND short_description LIKE 'Compuesto lipotrópico%'")
+    .run('Inyección lipotrópica (MIC). L-Carnitina 20mg · L-Arginina 20mg · Metionina 25mg · Inositol 50mg · Colina 50mg · B6 25mg · B5 25mg.',
+         'Lipotropic (MIC) injection. L-Carnitine 20mg · L-Arginine 20mg · Methionine 25mg · Inositol 50mg · Choline 50mg · B6 25mg · B5 25mg.');
+} catch (_) {}
 
 // Admin (only if missing)
 if (!db.prepare('SELECT id FROM admins WHERE username = ?').get('admin')) {
@@ -56,13 +65,51 @@ const insSet = db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?
 insSet.run('shipping_note_es', 'Envíos internacionales. 2-5 días hábiles.');
 insSet.run('legal_disclaimer_es', 'Productos exclusivamente para uso de investigación. No aptos para consumo humano ni veterinario.');
 
+// New blend products (added 2026-06-23, $80 / 10ml each). Defined once here and spread into P below,
+// so --force and a fresh DB seed them too. Shape matches P: [cat, name_es, name_en, short_es, short_en, [[code,label,price,stock]], featured]
+const NEW_BLENDS = [
+  ['Metabólicos','Lipo-C 120 (Clear)','Lipo-C 120 (Clear)','Inyección lipotrópica (versión clear). Metionina 15mg · Cloruro de colina 50mg · Carnitina 50mg.','Lipotropic injection (clear). Methionine 15mg · Choline Chloride 50mg · Carnitine 50mg.',[['LC120','10ml',80,20]],0],
+  ['Metabólicos','Lipo-C Fat Blaster','Lipo-C Fat Blaster','Lipotrópico de alta potencia. L-Carnitina 300mg · Metionina 25mg · Inositol 50mg · Colina 50mg · B12 1mg · B6 50mg.','High-strength lipotropic. L-Carnitine 300mg · Methionine 25mg · Inositol 50mg · Choline 50mg · B12 1mg · B6 50mg.',[['LC526','10ml',80,20]],0],
+  ['Metabólicos','Super Shred','Super Shred','Mezcla avanzada para definición. L-Carnitina 400mg · Mezcla MIC 100mg · ATP 50mg · Albuterol 2mg · B12 1mg.','Advanced shred blend. L-Carnitine 400mg · MIC Blend 100mg · ATP 50mg · Albuterol 2mg · B12 1mg.',[['LC553','10ml',80,20]],0],
+  ['Recuperación','Super Human Blend','Super Human Blend','Mezcla de aminoácidos para rendimiento y recuperación. L-Arginina 110mg · L-Ornitina 110mg · L-Citrulina 120mg · L-Lisina 70mg · L-Glutamina 40mg · L-Prolina 60mg · L-Taurina 60mg · L-Carnitina 220mg · NAC 75mg.','Amino blend for performance and recovery. L-Arginine 110mg · L-Ornithine 110mg · L-Citrulline 120mg · L-Lysine 70mg · L-Glutamine 40mg · L-Proline 60mg · L-Taurine 60mg · L-Carnitine 220mg · NAC 75mg.',[['SHB','10ml',80,20]],0],
+  ['Estética y piel','Healthy Hair, Skin & Nails','Healthy Hair, Skin & Nails','Mezcla de vitaminas para cabello, piel y uñas. Niacinamida 50mg · Tiamina HCL 50mg · Ácido pantoténico 25mg · Colina 10mg · Inositol 10mg.','Vitamin blend for hair, skin & nails. Niacinamide 50mg · Thiamine HCL 50mg · Pantothenic Acid 25mg · Choline 10mg · Inositol 10mg.',[['HHB','10ml',80,20]],0,'healthy-hair-skin-nails'],
+];
+
 const existingCount = db.prepare('SELECT COUNT(*) c FROM products').get().c;
+
+// Idempotent ADD: when the catalog is already populated, INSERT any NEW_BLENDS product whose vial
+// code is missing — so new products go live on a NORMAL deploy WITHOUT --force (which would wipe
+// admin price edits). Existing rows are never touched. On a fresh/empty DB the full reseed below
+// (P already includes NEW_BLENDS) covers them, so this guard skips it.
+if (existingCount > 0) {
+  const _insBlend = db.prepare(`INSERT INTO products
+    (name, name_en, slug, category_id, short_description, short_description_en, presentation, purity, price, stock, image, sizes, featured, active)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`);
+  let _added = 0;
+  for (const [cat, nameEs, nameEn, sEs, sEn, rawSizes, featured, slugOverride] of NEW_BLENDS) {
+    const code = rawSizes[0][0];
+    if (db.prepare('SELECT 1 FROM products WHERE sizes LIKE ?').get(`%"code":"${code}"%`)) continue;
+    try {
+      const catRow = db.prepare('SELECT id FROM categories WHERE slug = ?').get(slug(cat));
+      const sizes = rawSizes.map(([c, label, price, stock]) => ({ label, price, stock, code: c, img: '' }));
+      const presentation = sizes.length === 1 ? `Vial ${sizes[0].label} · 10 viales / kit` : `${sizes.length} presentaciones · 10 viales / kit`;
+      _insBlend.run(nameEs, nameEn, slugOverride || slug(nameEs), catRow ? catRow.id : null, sEs, sEn, presentation, 'HPLC >99%',
+        Math.min(...sizes.map(s => s.price)), sizes.reduce((a, s) => a + s.stock, 0), '', JSON.stringify(sizes), featured ? 1 : 0);
+      _added++;
+    } catch (e) { console.error('blend add skip', code, e.message); }
+  }
+  if (_added) console.log(`✓ Added ${_added} new blend product(s)`);
+}
+
 if (existingCount > 0 && !FORCE) {
-  console.log(`Catalog already has ${existingCount} products — skipping reseed (use --force to rebuild).`);
+  console.log(`Catalog has ${existingCount} products — kept as-is; use --force to fully rebuild.`);
   process.exit(0);
 }
 
-const img = code => `/uploads/${code.toLowerCase()}.png`;
+const img = code => {
+  const file = code.toLowerCase() + '.png';
+  return fs.existsSync(path.join(__dirname, 'public', 'uploads', file)) ? `/uploads/${file}` : '';
+};
 
 // [category, name_es, name_en, short_es, short_en, [[code,label,price,stock]...], featured]
 const P = [
@@ -74,7 +121,7 @@ const P = [
     [['RT5','5mg',79,24],['RT10','10mg',98,28],['RT20','20mg',180,14],['RT30','30mg',219,10],['RT50','50mg',403,6],['RT60','60mg',518,5]],1],
   ['Metabólicos','Cagrilintide','Cagrilintide','Análogo de amilina para investigación en saciedad y composición corporal.','Amylin analog for satiety and body-composition research.',
     [['CGL5','5mg',102,16],['CGL10','10mg',222,8]],0],
-  ['Metabólicos','Lipo-C','Lipo-C','Compuesto lipotrópico (MIC) inyectable.','Injectable lipotropic compound (MIC).',
+  ['Metabólicos','Lipo-C','Lipo-C','Inyección lipotrópica (MIC). L-Carnitina 20mg · L-Arginina 20mg · Metionina 25mg · Inositol 50mg · Colina 50mg · B6 25mg · B5 25mg.','Lipotropic (MIC) injection. L-Carnitine 20mg · L-Arginine 20mg · Methionine 25mg · Inositol 50mg · Choline 50mg · B6 25mg · B5 25mg.',
     [['LC216','10ml',78,22]],0],
   ['Metabólicos','Vitamina B12','Vitamin B12','Cobalamina inyectable para metabolismo energético y función neurológica.','Injectable cobalamin for energy metabolism and neurological function.',
     [['B12','10mg',87,30]],0],
@@ -200,7 +247,9 @@ const P = [
   ['Accesorios','Agua bacteriostática','Bacteriostatic Water','Solución estéril con 0.9% alcohol bencílico para reconstitución.','Sterile 0.9% benzyl-alcohol solution for reconstitution.',
     [['WA3','3ml',15,40],['WA10','10ml',10,40]],0],
   ['Accesorios','Ácido acético (agua)','Acetic Acid Water','Solución estéril de ácido acético 0.6% para péptidos sensibles a pH.','Sterile 0.6% acetic-acid solution for pH-sensitive peptides.',
-    [['ADW3','3ml',20,25],['ADW10','10ml',22,20]],0,'acetic-acid']   // explicit clean slug (see migration above) — keeps it on a fresh DB too
+    [['ADW3','3ml',20,25],['ADW10','10ml',22,20]],0,'acetic-acid'],   // explicit clean slug (see migration above) — keeps it on a fresh DB too
+
+  ...NEW_BLENDS   // the 5 new blend products defined near the top — included so --force / a fresh DB seed them too
 ];
 
 const catId = name => {
