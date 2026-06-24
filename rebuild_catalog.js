@@ -31,6 +31,21 @@ try {
          'Lipotropic (MIC) injection. L-Carnitine 20mg · L-Arginine 20mg · Methionine 25mg · Inositol 50mg · Choline 50mg · B6 25mg · B5 25mg.');
 } catch (_) {}
 
+// Wire the generated vial images onto the 5 new blends once their PNGs exist (idempotent — only sets
+// when the product's image is still empty, so it never fights a later admin image change).
+for (const code of ['LC120', 'LC526', 'LC553', 'SHB', 'HHB']) {
+  try {
+    const file = code.toLowerCase() + '.png';
+    if (!fs.existsSync(path.join(__dirname, 'public', 'uploads', file))) continue;
+    const url = '/uploads/' + file;
+    const row = db.prepare("SELECT id, sizes FROM products WHERE sizes LIKE ? AND (image IS NULL OR image = '')").get(`%"code":"${code}"%`);
+    if (!row) continue;
+    let szs = JSON.parse(row.sizes);
+    szs = szs.map(s => (s && String(s.code).toUpperCase() === code) ? Object.assign({}, s, { img: url }) : s);
+    db.prepare('UPDATE products SET image = ?, sizes = ? WHERE id = ?').run(url, JSON.stringify(szs), row.id);
+  } catch (_) {}
+}
+
 // Admin (only if missing)
 if (!db.prepare('SELECT id FROM admins WHERE username = ?').get('admin')) {
   db.prepare('INSERT INTO admins (username, password_hash) VALUES (?, ?)').run('admin', bcrypt.hashSync('admin123', 10));
